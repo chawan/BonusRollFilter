@@ -7,6 +7,7 @@ local BRF_NightholdEncounters = {1706,1725,1731,1751,1762,1713,1761,1732,1743,17
 local BRF_NightmareEncounters = {1703,1744,1738,1667,1704,1750,1726}
 local BRF_TrialOfValorEncounters = {1819, 1830, 1829}
 local BRF_WorldBossEncounters = {1790,1956,1883,1774,1789,1795,1770,1769,1884,1783,1749,1763,1885,1756,1796}
+local BRF_TombOfSargerasEncounters = {1862, 1867, 1856, 1903, 1861, 1896, 1897, 1873, 1898}
 
 local BonusRollFilter_OptionsDefaults = {
     profile = {
@@ -50,6 +51,16 @@ local BonusRollFilter_OptionsDefaults = {
             [1885] = false,
             [1756] = false,
             [1796] = false,
+            -- Tomb of Sargeras
+            [1862] = false, 
+            [1867] = false, 
+            [1856] = false, 
+            [1903] = false, 
+            [1861] = false, 
+            [1896] = false, 
+            [1897] = false, 
+            [1873] = false, 
+            [1898] = false
         },
         [15] = {
             -- Nighthold
@@ -75,6 +86,16 @@ local BonusRollFilter_OptionsDefaults = {
             [1819] = false,
             [1830] = false,
             [1829] = false,
+            -- Tomb of Sargeras
+            [1862] = false, 
+            [1867] = false, 
+            [1856] = false, 
+            [1903] = false, 
+            [1861] = false, 
+            [1896] = false, 
+            [1897] = false, 
+            [1873] = false, 
+            [1898] = false
         },
         [16] = {
             -- Nighthold
@@ -100,6 +121,16 @@ local BonusRollFilter_OptionsDefaults = {
             [1819] = false,
             [1830] = false,
             [1829] = false,
+            -- Tomb of Sargeras
+            [1862] = false, 
+            [1867] = false, 
+            [1856] = false, 
+            [1903] = false, 
+            [1861] = false, 
+            [1896] = false, 
+            [1897] = false, 
+            [1873] = false, 
+            [1898] = false
         },
         [17] = {
             -- Nighthold
@@ -125,6 +156,16 @@ local BonusRollFilter_OptionsDefaults = {
             [1819] = false,
             [1830] = false,
             [1829] = false,
+            -- Tomb of Sargeras
+            [1862] = false, 
+            [1867] = false, 
+            [1856] = false, 
+            [1903] = false, 
+            [1861] = false, 
+            [1896] = false, 
+            [1897] = false, 
+            [1873] = false, 
+            [1898] = false
         },
         [23] = false
     }
@@ -138,10 +179,201 @@ local BonusRollFilter_OptionsTable = {
             fontSize = "medium",
             type = "description",
         },
+        tombOfSargeras = {
+            name = "Tomb of Sargeras",
+            type = "group",
+            order = 1,
+            args = {
+                tombOfSargerasAllLFROn = {
+                    name = "Hide all rolls in LFR",
+                    desc = "Hide bonus rolls for all Tomb of Sargeras bosses in LFR",
+                    descStyle = "inline",
+                    order = 1,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
+                            BonusRollFilter.db.profile[17][value] = true
+                        end
+                    end,
+                },
+                tombOfSargerasAllLFROff = {
+                    name = "Show all rolls in LFR",
+                    desc = "Show bonus rolls for all Tomb of Sargeras bosses in LFR",
+                    descStyle = "inline",
+                    order = 1,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
+                            BonusRollFilter.db.profile[17][value] = false
+                        end
+                    end,
+                },
+                lfr={
+                    name = "LFR",
+                    type = "multiselect",
+                    order = 3,
+                    set = function(info, key, value)
+                        BonusRollFilter.db.profile[17][key] = value
+                    end,
+                    get = function(info, key)
+                        return BonusRollFilter.db.profile[17][key]
+                    end,
+                    values={
+                        [1862] = "Goroth", 
+                        [1867] = "Demonic Inquisition", 
+                        [1856] = "Harjatan", 
+                        [1903] = "Sisters of the Moon", 
+                        [1861] = "Mistress Sassz'ine", 
+                        [1896] = "The Desolate Host", 
+                        [1897] = "Maiden of Vigilance", 
+                        [1873] = "Fallen Avatar", 
+                        [1898] = "Kil'jaeden"
+                    }
+                },
+                tombOfSargerasAllNormalOn = {
+                    name = "Hide all rolls on normal",
+                    desc = "Hide bonus rolls for all Tomb of Sargeras bosses on normal",
+                    descStyle = "inline",
+                    order = 4,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
+                            BonusRollFilter.db.profile[14][value] = true
+                        end
+                    end,
+                },
+                tombOfSargerasAllNormalOff = {
+                    name = "Show all rolls on normal",
+                    desc = "Show bonus rolls for all Tomb of Sargeras bosses on normal",
+                    descStyle = "inline",
+                    order = 5,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
+                            BonusRollFilter.db.profile[14][value] = false
+                        end
+                    end,
+                },
+                normal={
+                    name = "Normal",
+                    type = "multiselect",
+                    order = 6,
+                    set = function(info, key, value)
+                        BonusRollFilter.db.profile[14][key] = value
+                    end,
+                    get = function(info, key)
+                        return BonusRollFilter.db.profile[14][key]
+                    end,
+                    values={
+                        [1862] = "Goroth", 
+                        [1867] = "Demonic Inquisition", 
+                        [1856] = "Harjatan", 
+                        [1903] = "Sisters of the Moon", 
+                        [1861] = "Mistress Sassz'ine", 
+                        [1896] = "The Desolate Host", 
+                        [1897] = "Maiden of Vigilance", 
+                        [1873] = "Fallen Avatar", 
+                        [1898] = "Kil'jaeden"
+                    }
+                },
+                tombOfSargerasdAllHeroicOn = {
+                    name = "Hide all rolls on heroic",
+                    desc = "Hide bonus rolls for all Tomb of Sargeras bosses on heroic",
+                    descStyle = "inline",
+                    order = 7,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
+                            BonusRollFilter.db.profile[15][value] = true
+                        end
+                    end,
+                },
+                tombOfSargerasAlHeroicOff = {
+                    name = "Show all rolls on heroic",
+                    desc = "Show bonus rolls for all Tomb of Sargeras bosses on heroic",
+                    descStyle = "inline",
+                    order = 8,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
+                            BonusRollFilter.db.profile[15][value] = false
+                        end
+                    end,
+                },
+                heroic={
+                    name = "Heroic",
+                    type = "multiselect",
+                    order = 9,
+                    set = function(info, key, value)
+                        BonusRollFilter.db.profile[15][key] = value
+                    end,
+                    get = function(info, key)
+                        return BonusRollFilter.db.profile[15][key]
+                    end,
+                    values={
+                        [1862] = "Goroth", 
+                        [1867] = "Demonic Inquisition", 
+                        [1856] = "Harjatan", 
+                        [1903] = "Sisters of the Moon", 
+                        [1861] = "Mistress Sassz'ine", 
+                        [1896] = "The Desolate Host", 
+                        [1897] = "Maiden of Vigilance", 
+                        [1873] = "Fallen Avatar", 
+                        [1898] = "Kil'jaeden"
+                    }
+                },
+                tombOfSargerasAllMythicOn = {
+                    name = "Hide all rolls on mythic",
+                    desc = "Hides bonus rolls for all Tomb of Sargeras bosses on mythic",
+                    descStyle = "inline",
+                    order = 10,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
+                            BonusRollFilter.db.profile[16][value] = true
+                        end
+                    end,
+                },
+                tombOfSargerasAllMythicOff = {
+                    name = "Show all rolls on mythic",
+                    desc = "Show bonus rolls for all Tomb of Sargeras bosses on mythic",
+                    descStyle = "inline",
+                    order = 11,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
+                            BonusRollFilter.db.profile[16][value] = false
+                        end
+                    end,
+                },
+                mythic={
+                    name = "Mythic",
+                    type = "multiselect",
+                    order = 12,
+                    set = function(info, key, value)
+                        BonusRollFilter.db.profile[16][key] = value
+                    end,
+                    get = function(info, key)
+                        return BonusRollFilter.db.profile[16][key]
+                    end,
+                    values={
+                        [1862] = "Goroth", 
+                        [1867] = "Demonic Inquisition", 
+                        [1856] = "Harjatan", 
+                        [1903] = "Sisters of the Moon", 
+                        [1861] = "Mistress Sassz'ine", 
+                        [1896] = "The Desolate Host", 
+                        [1897] = "Maiden of Vigilance", 
+                        [1873] = "Fallen Avatar", 
+                        [1898] = "Kil'jaeden"
+                    }
+                }
+            }
+        },
         nighthold={
             name = "The Nighthold",
             type = "group",
-            order = 1,
+            order = 2,
             args={
                 nightholdAllLFROn = {
                     name = "Hide all rolls in LFR",
@@ -336,7 +568,7 @@ local BonusRollFilter_OptionsTable = {
         emeraldNightmare={
             name = "Emerald Nightmare",
             type = "group",
-            order = 2,
+            order = 3,
             args={
                 emeraldNightmareAllLFROn = {
                     name = "Hide all rolls in LFR",
@@ -519,7 +751,7 @@ local BonusRollFilter_OptionsTable = {
         trialOfValor={
             name = "Trial of Valor",
             type = "group",
-            order = 3,
+            order = 4,
             args={
                 trialOfValorAllLFROn = {
                     name = "Hide all rolls in LFR",
@@ -686,7 +918,7 @@ local BonusRollFilter_OptionsTable = {
         worldBosses={
             name = "World Bosses",
             type = "group",
-            order = 4,
+            order = 5,
             args={
                 worldBossesAllOn = {
                     name = "Hide rolls for all world bosses",
@@ -745,7 +977,7 @@ local BonusRollFilter_OptionsTable = {
         dungeons={
             name = "Mythic Dungeons",
             type = "group",
-            order = 5,
+            order = 6,
             args={
                 disable = {
                     name = "Mythic Dungeons",

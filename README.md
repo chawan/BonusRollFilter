@@ -7,7 +7,7 @@ To configure the addon type /brf config or open the blizzard interface settings 
 In the configuration you can then select bosses that you want to hide bonus rolls on.
   
 ## Installation
-The easiest way to install this addon is to download it from Curse using either the [Twitch Client](https://mods.curse.com/client) or directly from the [Curse](https://mods.curse.com/addons/wow/267311-bonusrollfilter) website
+The easiest way to install this addon is to download it from Curse using either the [Twitch Client](https://mods.curse.com/client) or directly from the [Curse website](https://mods.curse.com/addons/wow/267311-bonusrollfilter).
 
 ## Problems
 Please report any problems you find by opening an issue on [CurseForge](https://wow.curseforge.com/projects/bonusrollfilter/issues "CurseForge").  
