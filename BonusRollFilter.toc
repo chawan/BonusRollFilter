@@ -1,0 +1,10 @@
+## Interface: 70200
+## Title: BonusRollFilter
+## Version: 7.2.0.3-release
+## Author: Chawan
+## Description: BonusRollFilter allows you to specify exactly which bosses and difficulties you want bonus rolls to appear on.
+## Notes: BonusRollFilter allows you to specify exactly which bosses and difficulties you want bonus rolls to appear on.
+## SavedVariables: BRF_Data
+
+embeds.xml
+Core.lua
