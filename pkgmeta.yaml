@@ -1,0 +1,4 @@
+package-as: BonusRollFilter
+
+ignore:
+  - README.md
