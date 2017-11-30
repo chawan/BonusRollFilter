@@ -8,6 +8,7 @@ local BRF_NightmareEncounters = {1703,1744,1738,1667,1704,1750,1726}
 local BRF_TrialOfValorEncounters = {1819, 1830, 1829}
 local BRF_WorldBossEncounters = {1790,1956,1883,1774,1789,1795,1770,1769,1884,1783,1749,1763,1885,1756,1796}
 local BRF_TombOfSargerasEncounters = {1862, 1867, 1856, 1903, 1861, 1896, 1897, 1873, 1898}
+local BRF_AntorusEncounters = {1992, 1987, 1997, 1985, 2025, 2009, 2004, 1983, 1986, 1984, 2031}
 
 local BonusRollFilter_OptionsDefaults = {
     profile = {
@@ -60,7 +61,19 @@ local BonusRollFilter_OptionsDefaults = {
             [1896] = false, 
             [1897] = false, 
             [1873] = false, 
-            [1898] = false
+            [1898] = false,
+            -- Antorus, the Burning Throne
+            [2031] =  false,
+            [1992] =  false, 
+            [1987] =  false, 
+            [1997] =  false, 
+            [1985] =  false, 
+            [2025] =  false, 
+            [2009] =  false, 
+            [2004] =  false, 
+            [1983] =  false, 
+            [1986] =  false, 
+            [1984] =  false, 
         },
         [15] = {
             -- Nighthold
@@ -95,7 +108,19 @@ local BonusRollFilter_OptionsDefaults = {
             [1896] = false, 
             [1897] = false, 
             [1873] = false, 
-            [1898] = false
+            [1898] = false,
+            -- Antorus, the Burning Throne
+            [2031] =  false,
+            [1992] =  false, 
+            [1987] =  false, 
+            [1997] =  false, 
+            [1985] =  false, 
+            [2025] =  false, 
+            [2009] =  false, 
+            [2004] =  false, 
+            [1983] =  false, 
+            [1986] =  false, 
+            [1984] =  false, 
         },
         [16] = {
             -- Nighthold
@@ -130,7 +155,19 @@ local BonusRollFilter_OptionsDefaults = {
             [1896] = false, 
             [1897] = false, 
             [1873] = false, 
-            [1898] = false
+            [1898] = false,
+            -- Antorus, the Burning Throne
+            [2031] =  false,
+            [1992] =  false, 
+            [1987] =  false, 
+            [1997] =  false, 
+            [1985] =  false, 
+            [2025] =  false, 
+            [2009] =  false, 
+            [2004] =  false, 
+            [1983] =  false, 
+            [1986] =  false, 
+            [1984] =  false, 
         },
         [17] = {
             -- Nighthold
@@ -165,7 +202,19 @@ local BonusRollFilter_OptionsDefaults = {
             [1896] = false, 
             [1897] = false, 
             [1873] = false, 
-            [1898] = false
+            [1898] = false,
+            -- Antorus, the Burning Throne
+            [2031] =  false,
+            [1992] =  false, 
+            [1987] =  false, 
+            [1997] =  false, 
+            [1985] =  false, 
+            [2025] =  false, 
+            [2009] =  false, 
+            [2004] =  false, 
+            [1983] =  false, 
+            [1986] =  false, 
+            [1984] =  false, 
         },
         [23] = false
     }
@@ -879,6 +928,197 @@ local BonusRollFilter_OptionsTable = {
                         [1819] = "Odyn",
                         [1830] = "Guarm",
                         [1829] = "Helya",
+                    }
+                }
+            }
+        },
+        antorus={
+            name = "Antorus, the Burning Throne",
+            type = "group",
+            order = 4,
+            args={
+                antorusAllLFROn = {
+                    name = "Hide all rolls in LFR",
+                    desc = "Hide bonus rolls for all Antorus bosses in LFR",
+                    order = 1,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_AntorusEncounters) do
+                            BonusRollFilter.db.profile[17][value] = true
+                        end
+                    end,
+                },
+                antorusAllLFROff = {
+                    name = "Show all rolls in LFR",
+                    desc = "Show bonus rolls for all Antorus bosses in LFR",
+                    order = 2,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_AntorusEncounters) do
+                            BonusRollFilter.db.profile[17][value] = false
+                        end
+                    end,
+                },
+                lfr={
+                    name = "LFR",
+                    type = "multiselect",
+                    order = 3,
+                    set = function(info, key, value)
+                        BonusRollFilter.db.profile[17][key] = value
+                    end,
+                    get = function(info, key)
+                        return BonusRollFilter.db.profile[17][key]
+                    end,
+                    values={
+                        [1992] =  "Garothi Worldbreaker", 
+                        [1987] =  "Felhounds of Sargeras", 
+                        [1997] =  "Antoran High Command", 
+                        [1985] =  "Portal Keeper Hasabel", 
+                        [2025] =  "Eonar the Life-Binder", 
+                        [2009] =  "Imonar the Soulhunter", 
+                        [2004] =  "Kin'garoth", 
+                        [1983] =  "Varimathras", 
+                        [1986] =  "The Coven of Shivarra", 
+                        [1984] =  "Aggramar",
+                        [2031] =  "Argus the Unmaker",
+                    }
+                },
+                antorusAllNormalOn = {
+                    name = "Hide all rolls on normal",
+                    desc = "Hide bonus rolls for all Antorus bosses on normal",
+                    order = 4,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_AntorusEncounters) do
+                            BonusRollFilter.db.profile[14][value] = true
+                        end
+                    end,
+                },
+                antorusAllNormalOff = {
+                    name = "Show all rolls on normal",
+                    desc = "Show bonus rolls for all Antorus bosses on normal",
+                    order = 5,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_AntorusEncounters) do
+                            BonusRollFilter.db.profile[14][value] = false
+                        end
+                    end,
+                },
+                normal={
+                    name = "Normal",
+                    type = "multiselect",
+                    order = 6,
+                    set = function(info, key, value)
+                        BonusRollFilter.db.profile[14][key] = value
+                    end,
+                    get = function(info, key)
+                        return BonusRollFilter.db.profile[14][key]
+                    end,
+                    values={
+                        [1992] =  "Garothi Worldbreaker", 
+                        [1987] =  "Felhounds of Sargeras", 
+                        [1997] =  "Antoran High Command", 
+                        [1985] =  "Portal Keeper Hasabel", 
+                        [2025] =  "Eonar the Life-Binder", 
+                        [2009] =  "Imonar the Soulhunter", 
+                        [2004] =  "Kin'garoth", 
+                        [1983] =  "Varimathras", 
+                        [1986] =  "The Coven of Shivarra", 
+                        [1984] =  "Aggramar",
+                        [2031] =  "Argus the Unmaker",
+                    }
+                },
+                antorusllHeroicOn = {
+                    name = "Hide all rolls on heroic",
+                    desc = "Hide bonus rolls for all Antorus bosses on heroic",
+                    order = 7,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_AntorusEncounters) do
+                            BonusRollFilter.db.profile[15][value] = true
+                        end
+                    end,
+                },
+                trialOfValorAlHeroicOff = {
+                    name = "Show all rolls on heroic",
+                    desc = "Show bonus rolls for all Antorus bosses on heroic",
+                    order = 8,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_AntorusEncounters) do
+                            BonusRollFilter.db.profile[15][value] = false
+                        end
+                    end,
+                },
+                heroic={
+                    name = "Heroic",
+                    type = "multiselect",
+                    order = 9,
+                    set = function(info, key, value)
+                        BonusRollFilter.db.profile[15][key] = value
+                    end,
+                    get = function(info, key)
+                        return BonusRollFilter.db.profile[15][key]
+                    end,
+                    values={
+                        [1992] =  "Garothi Worldbreaker", 
+                        [1987] =  "Felhounds of Sargeras", 
+                        [1997] =  "Antoran High Command", 
+                        [1985] =  "Portal Keeper Hasabel", 
+                        [2025] =  "Eonar the Life-Binder", 
+                        [2009] =  "Imonar the Soulhunter", 
+                        [2004] =  "Kin'garoth", 
+                        [1983] =  "Varimathras", 
+                        [1986] =  "The Coven of Shivarra", 
+                        [1984] =  "Aggramar",
+                        [2031] =  "Argus the Unmaker",
+                    }
+                },
+                antorusAllMythicOn = {
+                    name = "Hide all rolls on mythic",
+                    desc = "Hides bonus rolls for all Antorus bosses on mythic",
+                    order = 10,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_AntorusEncounters) do
+                            BonusRollFilter.db.profile[16][value] = true
+                        end
+                    end,
+                },
+                antorusAllMythicOff = {
+                    name = "Show all rolls on mythic",
+                    desc = "Show bonus rolls for all Antorus bosses on mythic",
+                    order = 11,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_AntorusEncounters) do
+                            BonusRollFilter.db.profile[16][value] = false
+                        end
+                    end,
+                },
+                mythic={
+                    name = "Mythic",
+                    type = "multiselect",
+                    order = 12,
+                    set = function(info, key, value)
+                        BonusRollFilter.db.profile[16][key] = value
+                    end,
+                    get = function(info, key)
+                        return BonusRollFilter.db.profile[16][key]
+                    end,
+                    values={
+                        [1992] =  "Garothi Worldbreaker", 
+                        [1987] =  "Felhounds of Sargeras", 
+                        [1997] =  "Antoran High Command", 
+                        [1985] =  "Portal Keeper Hasabel", 
+                        [2025] =  "Eonar the Life-Binder", 
+                        [2009] =  "Imonar the Soulhunter", 
+                        [2004] =  "Kin'garoth", 
+                        [1983] =  "Varimathras", 
+                        [1986] =  "The Coven of Shivarra", 
+                        [1984] =  "Aggramar",
+                        [2031] =  "Argus the Unmaker",
                     }
                 }
             }
