@@ -9,6 +9,7 @@ local BRF_TrialOfValorEncounters = {1819, 1830, 1829}
 local BRF_WorldBossEncounters = {1790,1956,1883,1774,1789,1795,1770,1769,1884,1783,1749,1763,1885,1756,1796}
 local BRF_TombOfSargerasEncounters = {1862, 1867, 1856, 1903, 1861, 1896, 1897, 1873, 1898}
 local BRF_AntorusEncounters = {1992, 1987, 1997, 1985, 2025, 2009, 2004, 1983, 1986, 1984, 2031}
+local BRF_ArugsInvasionEncounters = {2010, 2011, 2012, 2013, 2014, 2015}
 
 local BonusRollFilter_OptionsDefaults = {
     profile = {
@@ -52,6 +53,13 @@ local BonusRollFilter_OptionsDefaults = {
             [1885] = false,
             [1756] = false,
             [1796] = false,
+            -- Argus Invasion Points
+            [2010] = false, 
+            [2011] = false, 
+            [2012] = false, 
+            [2013] = false, 
+            [2014] = false, 
+            [2015] = false,
             -- Tomb of Sargeras
             [1862] = false, 
             [1867] = false, 
@@ -935,7 +943,7 @@ local BonusRollFilter_OptionsTable = {
         antorus={
             name = "Antorus, the Burning Throne",
             type = "group",
-            order = 4,
+            order = 5,
             args={
                 antorusAllLFROn = {
                     name = "Hide all rolls in LFR",
@@ -1126,12 +1134,12 @@ local BonusRollFilter_OptionsTable = {
         worldBosses={
             name = "World Bosses",
             type = "group",
-            order = 5,
+            order = 6,
             args={
                 worldBossesAllOn = {
                     name = "Hide rolls for all world bosses",
                     desc = "Hide bonus rolls for all world bosses",
-                    order = 1,
+                    order = 5,
                     type = "execute",
                     func = function(info, val)
                         for key, value in pairs(BRF_WorldBossEncounters) do
@@ -1142,7 +1150,7 @@ local BonusRollFilter_OptionsTable = {
                 worldBossesAllOff = {
                     name = "Show rolls for all world bosses",
                     desc = "Show bonus rolls for all world bosses",
-                    order = 2,
+                    order = 6,
                     type = "execute",
                     func = function(info, val)
                         for key, value in pairs(BRF_WorldBossEncounters) do
@@ -1180,10 +1188,58 @@ local BonusRollFilter_OptionsTable = {
                 }
             }
         },
+        argusInvasions = {
+            name = "Argus Invasion Points",
+            type = "group",
+            order = 7,
+            args = {
+                argusBossesAllOn = {
+                    name = "Hide rolls for all Argus bosses",
+                    desc = "Hide bonus rolls for all Argus bosses",
+                    order = 1,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_ArugsInvasionEncounters) do
+                            BonusRollFilter.db.profile[14][value] = true
+                        end
+                    end,
+                },
+                argusBossesAllOff = {
+                    name = "Show rolls for all Argus bosses",
+                    desc = "Show bonus rolls for all Argus bosses",
+                    order = 2,
+                    type = "execute",
+                    func = function(info, val)
+                        for key, value in pairs(BRF_ArugsInvasionEncounters) do
+                            BonusRollFilter.db.profile[14][value] = false
+                        end
+                    end,
+                },
+                normal={
+                    name = "Argus Invasion Point Bosses",
+                    type = "multiselect",
+                    order = 3,
+                    set = function(info, key, value)
+                        BonusRollFilter.db.profile[14][key] = value
+                    end,
+                    get = function(info, key)
+                        return BonusRollFilter.db.profile[14][key]
+                    end,
+                    values={
+                        [2010] = "Matron Folnuna",
+                        [2011] = "Mistress Alluradel",
+                        [2012] = "Inquisitor Meto",
+                        [2013] = "Occularus",
+                        [2014] = "Sotanathor",
+                        [2015] = "Pit Lord Vilemus",
+                    }
+                }
+            }
+        },
         dungeons={
             name = "Mythic Dungeons",
             type = "group",
-            order = 6,
+            order = 8,
             args={
                 disable = {
                     name = "Mythic Dungeons",
