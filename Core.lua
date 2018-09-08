@@ -3,230 +3,325 @@ local BRF_ShowBonusRoll = false
 local BRF_RollFrame = nil
 local BRF_UserAction = false
 
-local BRF_NightholdEncounters = {1706,1725,1731,1751,1762,1713,1761,1732,1743,1737}
-local BRF_NightmareEncounters = {1703,1744,1738,1667,1704,1750,1726}
-local BRF_TrialOfValorEncounters = {1819, 1830, 1829}
-local BRF_WorldBossEncounters = {1790,1956,1883,1774,1789,1795,1770,1769,1884,1783,1749,1763,1885,1756,1796}
-local BRF_TombOfSargerasEncounters = {1862, 1867, 1856, 1903, 1861, 1896, 1897, 1873, 1898}
-local BRF_AntorusEncounters = {1992, 1987, 1997, 1985, 2025, 2009, 2004, 1983, 1986, 1984, 2031}
-local BRF_ArugsInvasionEncounters = {2010, 2011, 2012, 2013, 2014, 2015}
+local BRF_OptionsOrder = 1
+
+local BRF_TombOfSargerasEncounters = {
+    [1862] = "Goroth", 
+    [1867] = "Demonic Inquisition", 
+    [1856] = "Harjatan", 
+    [1903] = "Sisters of the Moon", 
+    [1861] = "Mistress Sassz'ine", 
+    [1896] = "The Desolate Host", 
+    [1897] = "Maiden of Vigilance", 
+    [1873] = "Fallen Avatar", 
+    [1898] = "Kil'jaeden"
+}
+
+local BRF_NightholdEncounters = {
+    [1706] = "Skorpyron",
+    [1725] = "Chronomatic Anomaly",
+    [1731] = "Trilliax",
+    [1751] = "Spellblade Aluriel",
+    [1762] = "Tichondrius",
+    [1713] = "Krosus",
+    [1761] = "High Botanist Tel'arn",
+    [1732] = "Star Augur Etraeus",
+    [1743] = "Grand Magistrix Elisande",
+    [1737] = "Gul'dan",
+}
+
+local BRF_NightmareEncounters = {
+    [1703] = "Nythendra",
+    [1744] = "Elerethe Renferal",
+    [1738] = "Il'gynoth, Heart of Corruption",
+    [1667] = "Ursoc",
+    [1704] = "Dragons of Nightmare",
+    [1750] = "Cenarius",
+    [1726] = "Xavius",
+}
+
+local BRF_TrialOfValorEncounters = {
+    [1819] = "Odyn",
+    [1830] = "Guarm",
+    [1829] = "Helya",
+}
+
+local BRF_AntorusEncounters = {
+    [1992] =  "Garothi Worldbreaker", 
+    [1987] =  "Felhounds of Sargeras", 
+    [1997] =  "Antoran High Command", 
+    [1985] =  "Portal Keeper Hasabel", 
+    [2025] =  "Eonar the Life-Binder", 
+    [2009] =  "Imonar the Soulhunter", 
+    [2004] =  "Kin'garoth", 
+    [1983] =  "Varimathras", 
+    [1986] =  "The Coven of Shivarra", 
+    [1984] =  "Aggramar",
+    [2031] =  "Argus the Unmaker",
+}
+
+local BRF_WorldBossEncountersLegion = {
+    [1790] = "Ana-Mouz",
+    [1956] = "Apocron",
+    [1883] = "Brutallus",
+    [1774] = "Calamir",
+    [1789] = "Drugon the Frostblood",
+    [1795] = "Flotsam",
+    [1770] = "Humongris",
+    [1769] = "Levantus",
+    [1884] = "Malificus",
+    [1783] = "Na'zak the Fiend",
+    [1749] = "Nithogg",
+    [1763] = "Shar'thos",
+    [1885] = "Si'vash",
+    [1756] = "The Soultakers",
+    [1796] = "Withered J'im",
+}
+
+local BRF_ArugsInvasionEncounters = {
+    [2010] = "Matron Folnuna",
+    [2011] = "Mistress Alluradel",
+    [2012] = "Inquisitor Meto",
+    [2013] = "Occularus",
+    [2014] = "Sotanathor",
+    [2015] = "Pit Lord Vilemus",
+}
+
+local BRF_UldirEncounters = {
+    [2168] = "Taloc",
+    [2167] = "MOTHER",
+    [2146] = "Fetid Devourer",
+    [2169] = "Zek'voz, Herald of N'zoth",
+    [2166] = "Vectis",
+    [2195] = "Zul, Reborn",
+    [2194] = "Mythrax the Unraveler",
+    [2147] = "G'huun"
+}
+
+local BRF_BFAWorldBosses = {
+    [2139] = "T'zane",
+    [2141] = "Ji'arak",
+    [2197] = "Hailstone Construct",
+    [2199] = "Azurethos, The Winged Typhoon",
+    [2213] = "Doom's Howl",
+    [2198] = "Warbringer Yenajz",
+    [2210] = "Dunegorger Kraulok"
+}
+
 
 local BonusRollFilter_OptionsDefaults = {
     profile = {
         [14] = {
-            -- Nighthold
-            [1706] = false,
-            [1725] = false,
-            [1731] = false,
-            [1751] = false,
-            [1762] = false,
-            [1713] = false,
-            [1761] = false,
-            [1732] = false,
-            [1743] = false,
-            [1737] = false,
-            -- Emerald Nightmare
-            [1703] = false,
-            [1744] = false,
-            [1738] = false,
-            [1667] = false,
-            [1704] = false,
-            [1750] = false,
-            [1726] = false,
-            -- Trial of Valor
-            [1819] = false,
-            [1830] = false,
-            [1829] = false,
-            -- World bosses
-            [1790] = false,
-            [1956] = false,
-            [1883] = false,
-            [1774] = false,
-            [1789] = false,
-            [1795] = false,
-            [1770] = false,
-            [1769] = false,
-            [1884] = false,
-            [1783] = false,
-            [1749] = false,
-            [1763] = false,
-            [1885] = false,
-            [1756] = false,
-            [1796] = false,
-            -- Argus Invasion Points
-            [2010] = false, 
-            [2011] = false, 
-            [2012] = false, 
-            [2013] = false, 
-            [2014] = false, 
-            [2015] = false,
-            -- Tomb of Sargeras
-            [1862] = false, 
-            [1867] = false, 
-            [1856] = false, 
-            [1903] = false, 
-            [1861] = false, 
-            [1896] = false, 
-            [1897] = false, 
-            [1873] = false, 
-            [1898] = false,
-            -- Antorus, the Burning Throne
-            [2031] =  false,
-            [1992] =  false, 
-            [1987] =  false, 
-            [1997] =  false, 
-            [1985] =  false, 
-            [2025] =  false, 
-            [2009] =  false, 
-            [2004] =  false, 
-            [1983] =  false, 
-            [1986] =  false, 
-            [1984] =  false, 
+            ["*"] = false
         },
         [15] = {
-            -- Nighthold
-            [1706] = false,
-            [1725] = false,
-            [1731] = false,
-            [1751] = false,
-            [1762] = false,
-            [1713] = false,
-            [1761] = false,
-            [1732] = false,
-            [1743] = false,
-            [1737] = false,
-            -- Emerald Nightmare
-            [1703] = false,
-            [1744] = false,
-            [1738] = false,
-            [1667] = false,
-            [1704] = false,
-            [1750] = false,
-            [1726] = false,
-            -- Trial of Valor
-            [1819] = false,
-            [1830] = false,
-            [1829] = false,
-            -- Tomb of Sargeras
-            [1862] = false, 
-            [1867] = false, 
-            [1856] = false, 
-            [1903] = false, 
-            [1861] = false, 
-            [1896] = false, 
-            [1897] = false, 
-            [1873] = false, 
-            [1898] = false,
-            -- Antorus, the Burning Throne
-            [2031] =  false,
-            [1992] =  false, 
-            [1987] =  false, 
-            [1997] =  false, 
-            [1985] =  false, 
-            [2025] =  false, 
-            [2009] =  false, 
-            [2004] =  false, 
-            [1983] =  false, 
-            [1986] =  false, 
-            [1984] =  false, 
+            ["*"] = false
         },
         [16] = {
-            -- Nighthold
-            [1706] = false,
-            [1725] = false,
-            [1731] = false,
-            [1751] = false,
-            [1762] = false,
-            [1713] = false,
-            [1761] = false,
-            [1732] = false,
-            [1743] = false,
-            [1737] = false,
-            -- Emerald Nightmare
-            [1703] = false,
-            [1744] = false,
-            [1738] = false,
-            [1667] = false,
-            [1704] = false,
-            [1750] = false,
-            [1726] = false,
-            -- Trial of Valor
-            [1819] = false,
-            [1830] = false,
-            [1829] = false,
-            -- Tomb of Sargeras
-            [1862] = false, 
-            [1867] = false, 
-            [1856] = false, 
-            [1903] = false, 
-            [1861] = false, 
-            [1896] = false, 
-            [1897] = false, 
-            [1873] = false, 
-            [1898] = false,
-            -- Antorus, the Burning Throne
-            [2031] =  false,
-            [1992] =  false, 
-            [1987] =  false, 
-            [1997] =  false, 
-            [1985] =  false, 
-            [2025] =  false, 
-            [2009] =  false, 
-            [2004] =  false, 
-            [1983] =  false, 
-            [1986] =  false, 
-            [1984] =  false, 
+            ["*"] = false 
         },
         [17] = {
-            -- Nighthold
-            [1706] = false,
-            [1725] = false,
-            [1731] = false,
-            [1751] = false,
-            [1762] = false,
-            [1713] = false,
-            [1761] = false,
-            [1732] = false,
-            [1743] = false,
-            [1737] = false,
-            -- Emerald Nightmare
-            [1703] = false,
-            [1744] = false,
-            [1738] = false,
-            [1667] = false,
-            [1704] = false,
-            [1750] = false,
-            [1726] = false,
-            -- Trial of Valor
-            [1819] = false,
-            [1830] = false,
-            [1829] = false,
-            -- Tomb of Sargeras
-            [1862] = false, 
-            [1867] = false, 
-            [1856] = false, 
-            [1903] = false, 
-            [1861] = false, 
-            [1896] = false, 
-            [1897] = false, 
-            [1873] = false, 
-            [1898] = false,
-            -- Antorus, the Burning Throne
-            [2031] =  false,
-            [1992] =  false, 
-            [1987] =  false, 
-            [1997] =  false, 
-            [1985] =  false, 
-            [2025] =  false, 
-            [2009] =  false, 
-            [2004] =  false, 
-            [1983] =  false, 
-            [1986] =  false, 
-            [1984] =  false, 
+            ["*"] = false
         },
         [23] = false
     }
 }
+
+function BonusRollFilter:GenerateWorldbossSettings(name, encounters)
+    local tempTable = {}
+
+    tempTable.name = name
+    tempTable.type = "group"
+    tempTable.order = BRF_OptionsOrder
+    tempTable.args = {
+            worldBossesAllOn = {
+                name = "Hide rolls for all bosses",
+                desc = "Hide bonus rolls for all bosses",
+                order = 1,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[14][key] = true
+                    end
+                end,
+            },
+            worldBossesAllOff = {
+                name = "Show rolls for all bosses",
+                desc = "Show bonus rolls for all bosses",
+                order = 1,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[14][key] = false
+                    end
+                end,
+            },
+            normal={
+                name = "Bosses",
+                type = "multiselect",
+                order = 3,
+                set = function(info, key, value)
+                    BonusRollFilter.db.profile[14][key] = value
+                end,
+                get = function(info, key)
+                    return BonusRollFilter.db.profile[14][key]
+                end,
+                values = encounters
+            },
+        }
+
+    BRF_OptionsOrder = BRF_OptionsOrder + 1
+    return tempTable
+end
+
+function BonusRollFilter:GenerateRaidSettings(name, encounters)
+    local tempTable = {}
+
+    tempTable.name = name
+    tempTable.type = "group"
+    tempTable.order = BRF_OptionsOrder
+    tempTable.args = {
+            AllLFROn = {
+                name = "Hide all rolls in LFR",
+                desc = "Hide bonus rolls for all "..name.." bosses in LFR",
+                order = 1,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[17][key] = true
+                    end
+                end,
+            },
+            AllLFROff = {
+                name = "Show all rolls in LFR",
+                desc = "Show bonus rolls for all "..name.." bosses in LFR",
+                order = 1,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[17][key] = false
+                    end
+                end,
+            },
+            lfr={
+                name = "LFR",
+                type = "multiselect",
+                order = 3,
+                set = function(info, key, value)
+                    BonusRollFilter.db.profile[17][key] = value
+                end,
+                get = function(info, key)
+                    return BonusRollFilter.db.profile[17][key]
+                end,
+                values = encounters
+            },
+            AllNormalOn = {
+                name = "Hide all rolls on normal",
+                desc = "Hide bonus rolls for all "..name.." bosses on normal",
+                order = 4,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[14][key] = true
+                    end
+                end,
+            },
+            AllNormalOff = {
+                name = "Show all rolls on normal",
+                desc = "Show bonus rolls for all "..name.." bosses on normal",
+                order = 5,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[14][key] = false
+                    end
+                end,
+            },
+            normal={
+                name = "Normal",
+                type = "multiselect",
+                order = 6,
+                set = function(info, key, value)
+                    BonusRollFilter.db.profile[14][key] = value
+                end,
+                get = function(info, key)
+                    return BonusRollFilter.db.profile[14][key]
+                end,
+                values = encounters
+            },
+            AllHeroicOn = {
+                name = "Hide all rolls on heroic",
+                desc = "Hide bonus rolls for all "..name.." bosses on heroic",
+                order = 7,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[15][key] = true
+                    end
+                end,
+            },
+            AllHeroicOff = {
+                name = "Show all rolls on heroic",
+                desc = "Show bonus rolls for all "..name.." bosses on heroic",
+                order = 8,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[15][key] = false
+                    end
+                end,
+            },
+            heroic={
+                name = "Heroic",
+                type = "multiselect",
+                order = 9,
+                set = function(info, key, value)
+                    BonusRollFilter.db.profile[15][key] = value
+                end,
+                get = function(info, key)
+                    return BonusRollFilter.db.profile[15][key]
+                end,
+                values = encounters
+            },
+            AllMythicOn = {
+                name = "Hide all rolls on mythic",
+                desc = "Hides bonus rolls for all "..name.." bosses on mythic",
+                order = 10,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[16][key] = true
+                    end
+                end,
+            },
+            AllMythicOff = {
+                name = "Show all rolls on mythic",
+                desc = "Show bonus rolls for all "..name.." bosses on mythic",
+                order = 11,
+                type = "execute",
+                func = function(info, val)
+                    for key, value in pairs(encounters) do
+                        BonusRollFilter.db.profile[16][key] = false
+                    end
+                end,
+            },
+            mythic={
+                name = "Mythic",
+                type = "multiselect",
+                order = 12,
+                set = function(info, key, value)
+                    BonusRollFilter.db.profile[16][key] = value
+                end,
+                get = function(info, key)
+                    return BonusRollFilter.db.profile[16][key]
+                end,
+                values = encounters
+            }
+        }
+
+    BRF_OptionsOrder = BRF_OptionsOrder + 1
+    return tempTable
+end
 
 local BonusRollFilter_OptionsTable = {
     type = "group",
@@ -236,1010 +331,33 @@ local BonusRollFilter_OptionsTable = {
             fontSize = "medium",
             type = "description",
         },
-        tombOfSargeras = {
-            name = "Tomb of Sargeras",
-            type = "group",
+        bfaCategory = {
+            name = "Battle for Azeroth",
             order = 1,
+            type = "group",
             args = {
-                tombOfSargerasAllLFROn = {
-                    name = "Hide all rolls in LFR",
-                    desc = "Hide bonus rolls for all Tomb of Sargeras bosses in LFR",
-                    order = 1,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
-                            BonusRollFilter.db.profile[17][value] = true
-                        end
-                    end,
-                },
-                tombOfSargerasAllLFROff = {
-                    name = "Show all rolls in LFR",
-                    desc = "Show bonus rolls for all Tomb of Sargeras bosses in LFR",
-                    order = 1,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
-                            BonusRollFilter.db.profile[17][value] = false
-                        end
-                    end,
-                },
-                lfr={
-                    name = "LFR",
-                    type = "multiselect",
-                    order = 3,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[17][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[17][key]
-                    end,
-                    values={
-                        [1862] = "Goroth", 
-                        [1867] = "Demonic Inquisition", 
-                        [1856] = "Harjatan", 
-                        [1903] = "Sisters of the Moon", 
-                        [1861] = "Mistress Sassz'ine", 
-                        [1896] = "The Desolate Host", 
-                        [1897] = "Maiden of Vigilance", 
-                        [1873] = "Fallen Avatar", 
-                        [1898] = "Kil'jaeden"
-                    }
-                },
-                tombOfSargerasAllNormalOn = {
-                    name = "Hide all rolls on normal",
-                    desc = "Hide bonus rolls for all Tomb of Sargeras bosses on normal",
-                    order = 4,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
-                            BonusRollFilter.db.profile[14][value] = true
-                        end
-                    end,
-                },
-                tombOfSargerasAllNormalOff = {
-                    name = "Show all rolls on normal",
-                    desc = "Show bonus rolls for all Tomb of Sargeras bosses on normal",
-                    order = 5,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
-                            BonusRollFilter.db.profile[14][value] = false
-                        end
-                    end,
-                },
-                normal={
-                    name = "Normal",
-                    type = "multiselect",
-                    order = 6,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[14][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[14][key]
-                    end,
-                    values={
-                        [1862] = "Goroth", 
-                        [1867] = "Demonic Inquisition", 
-                        [1856] = "Harjatan", 
-                        [1903] = "Sisters of the Moon", 
-                        [1861] = "Mistress Sassz'ine", 
-                        [1896] = "The Desolate Host", 
-                        [1897] = "Maiden of Vigilance", 
-                        [1873] = "Fallen Avatar", 
-                        [1898] = "Kil'jaeden"
-                    }
-                },
-                tombOfSargerasdAllHeroicOn = {
-                    name = "Hide all rolls on heroic",
-                    desc = "Hide bonus rolls for all Tomb of Sargeras bosses on heroic",
-                    order = 7,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
-                            BonusRollFilter.db.profile[15][value] = true
-                        end
-                    end,
-                },
-                tombOfSargerasAlHeroicOff = {
-                    name = "Show all rolls on heroic",
-                    desc = "Show bonus rolls for all Tomb of Sargeras bosses on heroic",
-                    order = 8,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
-                            BonusRollFilter.db.profile[15][value] = false
-                        end
-                    end,
-                },
-                heroic={
-                    name = "Heroic",
-                    type = "multiselect",
-                    order = 9,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[15][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[15][key]
-                    end,
-                    values={
-                        [1862] = "Goroth", 
-                        [1867] = "Demonic Inquisition", 
-                        [1856] = "Harjatan", 
-                        [1903] = "Sisters of the Moon", 
-                        [1861] = "Mistress Sassz'ine", 
-                        [1896] = "The Desolate Host", 
-                        [1897] = "Maiden of Vigilance", 
-                        [1873] = "Fallen Avatar", 
-                        [1898] = "Kil'jaeden"
-                    }
-                },
-                tombOfSargerasAllMythicOn = {
-                    name = "Hide all rolls on mythic",
-                    desc = "Hides bonus rolls for all Tomb of Sargeras bosses on mythic",
-                    order = 10,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
-                            BonusRollFilter.db.profile[16][value] = true
-                        end
-                    end,
-                },
-                tombOfSargerasAllMythicOff = {
-                    name = "Show all rolls on mythic",
-                    desc = "Show bonus rolls for all Tomb of Sargeras bosses on mythic",
-                    order = 11,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TombOfSargerasEncounters) do
-                            BonusRollFilter.db.profile[16][value] = false
-                        end
-                    end,
-                },
-                mythic={
-                    name = "Mythic",
-                    type = "multiselect",
-                    order = 12,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[16][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[16][key]
-                    end,
-                    values={
-                        [1862] = "Goroth", 
-                        [1867] = "Demonic Inquisition", 
-                        [1856] = "Harjatan", 
-                        [1903] = "Sisters of the Moon", 
-                        [1861] = "Mistress Sassz'ine", 
-                        [1896] = "The Desolate Host", 
-                        [1897] = "Maiden of Vigilance", 
-                        [1873] = "Fallen Avatar", 
-                        [1898] = "Kil'jaeden"
-                    }
-                }
+                uldir          = BonusRollFilter:GenerateRaidSettings("Uldir", BRF_UldirEncounters),
+                worldBossesBFA = BonusRollFilter:GenerateWorldbossSettings("World Bosses", BRF_BFAWorldBosses)
             }
         },
-        nighthold={
-            name = "The Nighthold",
-            type = "group",
+        legionCategory = {
+            name = "Legion",
             order = 2,
-            args={
-                nightholdAllLFROn = {
-                    name = "Hide all rolls in LFR",
-                    desc = "Hide bonus rolls for all Nighthold bosses in LFR",
-                    order = 1,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightholdEncounters) do
-                            BonusRollFilter.db.profile[17][value] = true
-                        end
-                    end,
-                },
-                nightholdAllLFROff = {
-                    name = "Show all rolls in LFR",
-                    desc = "Show bonus rolls for all Nighthold bosses in LFR",
-                    order = 2,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightholdEncounters) do
-                            BonusRollFilter.db.profile[17][value] = false
-                        end
-                    end,
-                },
-                lfr={
-                    name = "LFR",
-                    type = "multiselect",
-                    order = 3,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[17][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[17][key]
-                    end,
-                    values={
-                        [1706] = "Skorpyron",
-                        [1725] = "Chronomatic Anomaly",
-                        [1731] = "Trilliax",
-                        [1751] = "Spellblade Aluriel",
-                        [1762] = "Tichondrius",
-                        [1713] = "Krosus",
-                        [1761] = "High Botanist Tel'arn",
-                        [1732] = "Star Augur Etraeus",
-                        [1743] = "Grand Magistrix Elisande",
-                        [1737] = "Gul'dan",
-                    }
-                },
-                nightholdAllNormalOn = {
-                    name = "Hide all rolls on normal",
-                    desc = "Hide bonus rolls for all Nighthold bosses on normal",
-                    order = 4,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightholdEncounters) do
-                            BonusRollFilter.db.profile[14][value] = true
-                        end
-                    end,
-                },
-                nightholdAllNormalOff = {
-                    name = "Show all rolls on normal",
-                    desc = "Show bonus rolls for all Nighthold bosses on normal",
-                    order = 5,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightholdEncounters) do
-                            BonusRollFilter.db.profile[14][value] = false
-                        end
-                    end,
-                },
-                normal={
-                    name = "Normal",
-                    type = "multiselect",
-                    order = 6,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[14][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[14][key]
-                    end,
-                    values={
-                        [1706] = "Skorpyron",
-                        [1725] = "Chronomatic Anomaly",
-                        [1731] = "Trilliax",
-                        [1751] = "Spellblade Aluriel",
-                        [1762] = "Tichondrius",
-                        [1713] = "Krosus",
-                        [1761] = "High Botanist Tel'arn",
-                        [1732] = "Star Augur Etraeus",
-                        [1743] = "Grand Magistrix Elisande",
-                        [1737] = "Gul'dan",
-                    }
-                },
-                nightholdAllHeroicOn = {
-                    name = "Hide all rolls on heroic",
-                    desc = "Hide bonus rolls for all Nighthold bosses on heroic",
-                    order = 7,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightholdEncounters) do
-                            BonusRollFilter.db.profile[15][value] = true
-                        end
-                    end,
-                },
-                nightholdAlHeroicOff = {
-                    name = "Show all rolls on heroic",
-                    desc = "Show bonus rolls for all Nighthold bosses on heroic",
-                    order = 8,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightholdEncounters) do
-                            BonusRollFilter.db.profile[15][value] = false
-                        end
-                    end,
-                },
-                heroic={
-                    name = "Heroic",
-                    type = "multiselect",
-                    order = 9,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[15][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[15][key]
-                    end,
-                    values={
-                        [1706] = "Skorpyron",
-                        [1725] = "Chronomatic Anomaly",
-                        [1731] = "Trilliax",
-                        [1751] = "Spellblade Aluriel",
-                        [1762] = "Tichondrius",
-                        [1713] = "Krosus",
-                        [1761] = "High Botanist Tel'arn",
-                        [1732] = "Star Augur Etraeus",
-                        [1743] = "Grand Magistrix Elisande",
-                        [1737] = "Gul'dan",
-                    }
-                },
-                nightholdAllMythicOn = {
-                    name = "Hide all rolls on mythic",
-                    desc = "Hides bonus rolls for all Nighthold bosses on mythic",
-                    order = 10,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightholdEncounters) do
-                            BonusRollFilter.db.profile[16][value] = true
-                        end
-                    end,
-                },
-                nightholdAllMythicOff = {
-                    name = "Show all rolls on mythic",
-                    desc = "Show bonus rolls for all Nighthold bosses on mythic",
-                    order = 11,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightholdEncounters) do
-                            BonusRollFilter.db.profile[16][value] = false
-                        end
-                    end,
-                },
-                mythic={
-                    name = "Mythic",
-                    type = "multiselect",
-                    order = 12,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[16][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[16][key]
-                    end,
-                    values={
-                        [1706] = "Skorpyron",
-                        [1725] = "Chronomatic Anomaly",
-                        [1731] = "Trilliax",
-                        [1751] = "Spellblade Aluriel",
-                        [1762] = "Tichondrius",
-                        [1713] = "Krosus",
-                        [1761] = "High Botanist Tel'arn",
-                        [1732] = "Star Augur Etraeus",
-                        [1743] = "Grand Magistrix Elisande",
-                        [1737] = "Gul'dan",
-                    }
-                }
-            }
-        },
-        emeraldNightmare={
-            name = "Emerald Nightmare",
             type = "group",
-            order = 3,
-            args={
-                emeraldNightmareAllLFROn = {
-                    name = "Hide all rolls in LFR",
-                    desc = "Hide bonus rolls for all Emerald Nightmare bosses in LFR",
-                    order = 1,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightmareEncounters) do
-                            BonusRollFilter.db.profile[17][value] = true
-                        end
-                    end,
-                },
-                emeraldNightmareAllLFROff = {
-                    name = "Show all rolls in LFR",
-                    desc = "Show bonus rolls for all Emerald Nightmare bosses in LFR",
-                    order = 2,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightmareEncounters) do
-                            BonusRollFilter.db.profile[17][value] = false
-                        end
-                    end,
-                },
-                lfr={
-                    name = "LFR",
-                    type = "multiselect",
-                    order = 3,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[17][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[17][key]
-                    end,
-                    values={
-                        [1703] = "Nythendra",
-                        [1744] = "Elerethe Renferal",
-                        [1738] = "Il'gynoth, Heart of Corruption",
-                        [1667] = "Ursoc",
-                        [1704] = "Dragons of Nightmare",
-                        [1750] = "Cenarius",
-                        [1726] = "Xavius",
-                    }
-                },
-                emeraldNightmareAllNormalOn = {
-                    name = "Hide all rolls on normal",
-                    desc = "Hide bonus rolls for all Emerald Nightmare bosses on normal",
-                    order = 4,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightmareEncounters) do
-                            BonusRollFilter.db.profile[14][value] = true
-                        end
-                    end,
-                },
-                emeraldNightmareAllNormalOff = {
-                    name = "Show all rolls on normal",
-                    desc = "Show bonus rolls for all Emerald Nightmare bosses on normal",
-                    order = 5,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightmareEncounters) do
-                            BonusRollFilter.db.profile[14][value] = false
-                        end
-                    end,
-                },
-                normal={
-                    name = "Normal",
-                    type = "multiselect",
-                    order = 6,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[14][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[14][key]
-                    end,
-                    values={
-                        [1703] = "Nythendra",
-                        [1744] = "Elerethe Renferal",
-                        [1738] = "Il'gynoth, Heart of Corruption",
-                        [1667] = "Ursoc",
-                        [1704] = "Dragons of Nightmare",
-                        [1750] = "Cenarius",
-                        [1726] = "Xavius",
-                    }
-                },
-                emeraldNightmareAllHeroicOn = {
-                    name = "Hide all rolls on heroic",
-                    desc = "Hide bonus rolls for all Emerald Nightmare bosses on heroic",
-                    order = 7,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightmareEncounters) do
-                            BonusRollFilter.db.profile[15][value] = true
-                        end
-                    end,
-                },
-                emeraldNightmareAlHeroicOff = {
-                    name = "Show all rolls on heroic",
-                    desc = "Show bonus rolls for all Emerald Nightmare bosses on heroic",
-                    order = 8,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightmareEncounters) do
-                            BonusRollFilter.db.profile[15][value] = false
-                        end
-                    end,
-                },
-                heroic={
-                    name = "Heroic",
-                    type = "multiselect",
-                    order = 9,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[15][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[15][key]
-                    end,
-                    values={
-                        [1703] = "Nythendra",
-                        [1744] = "Elerethe Renferal",
-                        [1738] = "Il'gynoth, Heart of Corruption",
-                        [1667] = "Ursoc",
-                        [1704] = "Dragons of Nightmare",
-                        [1750] = "Cenarius",
-                        [1726] = "Xavius",
-                    }
-                },
-                emeraldNightmareAllMythicOn = {
-                    name = "Hide all rolls on mythic",
-                    desc = "Hides bonus rolls for all Emerald Nightmare bosses on mythic",
-                    order = 10,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightmareEncounters) do
-                            BonusRollFilter.db.profile[16][value] = true
-                        end
-                    end,
-                },
-                emeraldNightmareAllMythicOff = {
-                    name = "Show all rolls on mythic",
-                    desc = "Show bonus rolls for all Emerald Nightmare bosses on mythic",
-                    order = 11,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_NightmareEncounters) do
-                            BonusRollFilter.db.profile[16][value] = false
-                        end
-                    end,
-                },
-                mythic={
-                    name = "Mythic",
-                    type = "multiselect",
-                    order = 12,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[16][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[16][key]
-                    end,
-                    values={
-                        [1703] = "Nythendra",
-                        [1744] = "Elerethe Renferal",
-                        [1738] = "Il'gynoth, Heart of Corruption",
-                        [1667] = "Ursoc",
-                        [1704] = "Dragons of Nightmare",
-                        [1750] = "Cenarius",
-                        [1726] = "Xavius",
-                    }
-                }
-            }
-        },
-        trialOfValor={
-            name = "Trial of Valor",
-            type = "group",
-            order = 4,
-            args={
-                trialOfValorAllLFROn = {
-                    name = "Hide all rolls in LFR",
-                    desc = "Hide bonus rolls for all Trial of Valor bosses in LFR",
-                    order = 1,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TrialOfValorEncounters) do
-                            BonusRollFilter.db.profile[17][value] = true
-                        end
-                    end,
-                },
-                trialOfValorAllLFROff = {
-                    name = "Show all rolls in LFR",
-                    desc = "Show bonus rolls for all Trial of Valor bosses in LFR",
-                    order = 2,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TrialOfValorEncounters) do
-                            BonusRollFilter.db.profile[17][value] = false
-                        end
-                    end,
-                },
-                lfr={
-                    name = "LFR",
-                    type = "multiselect",
-                    order = 3,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[17][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[17][key]
-                    end,
-                    values={
-                        [1819] = "Odyn",
-                        [1830] = "Guarm",
-                        [1829] = "Helya",
-                    }
-                },
-                trialOfValorAllNormalOn = {
-                    name = "Hide all rolls on normal",
-                    desc = "Hide bonus rolls for all Trial of Valor bosses on normal",
-                    order = 4,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TrialOfValorEncounters) do
-                            BonusRollFilter.db.profile[14][value] = true
-                        end
-                    end,
-                },
-                trialOfValorAllNormalOff = {
-                    name = "Show all rolls on normal",
-                    desc = "Show bonus rolls for all Trial of Valor bosses on normal",
-                    order = 5,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TrialOfValorEncounters) do
-                            BonusRollFilter.db.profile[14][value] = false
-                        end
-                    end,
-                },
-                normal={
-                    name = "Normal",
-                    type = "multiselect",
-                    order = 6,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[14][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[14][key]
-                    end,
-                    values={
-                        [1819] = "Odyn",
-                        [1830] = "Guarm",
-                        [1829] = "Helya",
-                    }
-                },
-                trialOfValorAllHeroicOn = {
-                    name = "Hide all rolls on heroic",
-                    desc = "Hide bonus rolls for all Trial of Valor bosses on heroic",
-                    order = 7,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TrialOfValorEncounters) do
-                            BonusRollFilter.db.profile[15][value] = true
-                        end
-                    end,
-                },
-                trialOfValorAlHeroicOff = {
-                    name = "Show all rolls on heroic",
-                    desc = "Show bonus rolls for all Trial of Valor bosses on heroic",
-                    order = 8,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TrialOfValorEncounters) do
-                            BonusRollFilter.db.profile[15][value] = false
-                        end
-                    end,
-                },
-                heroic={
-                    name = "Heroic",
-                    type = "multiselect",
-                    order = 9,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[15][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[15][key]
-                    end,
-                    values={
-                        [1819] = "Odyn",
-                        [1830] = "Guarm",
-                        [1829] = "Helya",
-                    }
-                },
-                trialOfValorAllMythicOn = {
-                    name = "Hide all rolls on mythic",
-                    desc = "Hides bonus rolls for all Trial of Valor bosses on mythic",
-                    order = 10,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TrialOfValorEncounters) do
-                            BonusRollFilter.db.profile[16][value] = true
-                        end
-                    end,
-                },
-                trialOfValorAllMythicOff = {
-                    name = "Show all rolls on mythic",
-                    desc = "Show bonus rolls for all Trial of Valor bosses on mythic",
-                    order = 11,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_TrialOfValorEncounters) do
-                            BonusRollFilter.db.profile[16][value] = false
-                        end
-                    end,
-                },
-                mythic={
-                    name = "Mythic",
-                    type = "multiselect",
-                    order = 12,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[16][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[16][key]
-                    end,
-                    values={
-                        [1819] = "Odyn",
-                        [1830] = "Guarm",
-                        [1829] = "Helya",
-                    }
-                }
-            }
-        },
-        antorus={
-            name = "Antorus, the Burning Throne",
-            type = "group",
-            order = 5,
-            args={
-                antorusAllLFROn = {
-                    name = "Hide all rolls in LFR",
-                    desc = "Hide bonus rolls for all Antorus bosses in LFR",
-                    order = 1,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_AntorusEncounters) do
-                            BonusRollFilter.db.profile[17][value] = true
-                        end
-                    end,
-                },
-                antorusAllLFROff = {
-                    name = "Show all rolls in LFR",
-                    desc = "Show bonus rolls for all Antorus bosses in LFR",
-                    order = 2,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_AntorusEncounters) do
-                            BonusRollFilter.db.profile[17][value] = false
-                        end
-                    end,
-                },
-                lfr={
-                    name = "LFR",
-                    type = "multiselect",
-                    order = 3,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[17][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[17][key]
-                    end,
-                    values={
-                        [1992] =  "Garothi Worldbreaker", 
-                        [1987] =  "Felhounds of Sargeras", 
-                        [1997] =  "Antoran High Command", 
-                        [1985] =  "Portal Keeper Hasabel", 
-                        [2025] =  "Eonar the Life-Binder", 
-                        [2009] =  "Imonar the Soulhunter", 
-                        [2004] =  "Kin'garoth", 
-                        [1983] =  "Varimathras", 
-                        [1986] =  "The Coven of Shivarra", 
-                        [1984] =  "Aggramar",
-                        [2031] =  "Argus the Unmaker",
-                    }
-                },
-                antorusAllNormalOn = {
-                    name = "Hide all rolls on normal",
-                    desc = "Hide bonus rolls for all Antorus bosses on normal",
-                    order = 4,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_AntorusEncounters) do
-                            BonusRollFilter.db.profile[14][value] = true
-                        end
-                    end,
-                },
-                antorusAllNormalOff = {
-                    name = "Show all rolls on normal",
-                    desc = "Show bonus rolls for all Antorus bosses on normal",
-                    order = 5,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_AntorusEncounters) do
-                            BonusRollFilter.db.profile[14][value] = false
-                        end
-                    end,
-                },
-                normal={
-                    name = "Normal",
-                    type = "multiselect",
-                    order = 6,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[14][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[14][key]
-                    end,
-                    values={
-                        [1992] =  "Garothi Worldbreaker", 
-                        [1987] =  "Felhounds of Sargeras", 
-                        [1997] =  "Antoran High Command", 
-                        [1985] =  "Portal Keeper Hasabel", 
-                        [2025] =  "Eonar the Life-Binder", 
-                        [2009] =  "Imonar the Soulhunter", 
-                        [2004] =  "Kin'garoth", 
-                        [1983] =  "Varimathras", 
-                        [1986] =  "The Coven of Shivarra", 
-                        [1984] =  "Aggramar",
-                        [2031] =  "Argus the Unmaker",
-                    }
-                },
-                antorusllHeroicOn = {
-                    name = "Hide all rolls on heroic",
-                    desc = "Hide bonus rolls for all Antorus bosses on heroic",
-                    order = 7,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_AntorusEncounters) do
-                            BonusRollFilter.db.profile[15][value] = true
-                        end
-                    end,
-                },
-                trialOfValorAlHeroicOff = {
-                    name = "Show all rolls on heroic",
-                    desc = "Show bonus rolls for all Antorus bosses on heroic",
-                    order = 8,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_AntorusEncounters) do
-                            BonusRollFilter.db.profile[15][value] = false
-                        end
-                    end,
-                },
-                heroic={
-                    name = "Heroic",
-                    type = "multiselect",
-                    order = 9,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[15][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[15][key]
-                    end,
-                    values={
-                        [1992] =  "Garothi Worldbreaker", 
-                        [1987] =  "Felhounds of Sargeras", 
-                        [1997] =  "Antoran High Command", 
-                        [1985] =  "Portal Keeper Hasabel", 
-                        [2025] =  "Eonar the Life-Binder", 
-                        [2009] =  "Imonar the Soulhunter", 
-                        [2004] =  "Kin'garoth", 
-                        [1983] =  "Varimathras", 
-                        [1986] =  "The Coven of Shivarra", 
-                        [1984] =  "Aggramar",
-                        [2031] =  "Argus the Unmaker",
-                    }
-                },
-                antorusAllMythicOn = {
-                    name = "Hide all rolls on mythic",
-                    desc = "Hides bonus rolls for all Antorus bosses on mythic",
-                    order = 10,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_AntorusEncounters) do
-                            BonusRollFilter.db.profile[16][value] = true
-                        end
-                    end,
-                },
-                antorusAllMythicOff = {
-                    name = "Show all rolls on mythic",
-                    desc = "Show bonus rolls for all Antorus bosses on mythic",
-                    order = 11,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_AntorusEncounters) do
-                            BonusRollFilter.db.profile[16][value] = false
-                        end
-                    end,
-                },
-                mythic={
-                    name = "Mythic",
-                    type = "multiselect",
-                    order = 12,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[16][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[16][key]
-                    end,
-                    values={
-                        [1992] =  "Garothi Worldbreaker", 
-                        [1987] =  "Felhounds of Sargeras", 
-                        [1997] =  "Antoran High Command", 
-                        [1985] =  "Portal Keeper Hasabel", 
-                        [2025] =  "Eonar the Life-Binder", 
-                        [2009] =  "Imonar the Soulhunter", 
-                        [2004] =  "Kin'garoth", 
-                        [1983] =  "Varimathras", 
-                        [1986] =  "The Coven of Shivarra", 
-                        [1984] =  "Aggramar",
-                        [2031] =  "Argus the Unmaker",
-                    }
-                }
-            }
-        },
-        worldBosses={
-            name = "World Bosses",
-            type = "group",
-            order = 6,
-            args={
-                worldBossesAllOn = {
-                    name = "Hide rolls for all world bosses",
-                    desc = "Hide bonus rolls for all world bosses",
-                    order = 5,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_WorldBossEncounters) do
-                            BonusRollFilter.db.profile[14][value] = true
-                        end
-                    end,
-                },
-                worldBossesAllOff = {
-                    name = "Show rolls for all world bosses",
-                    desc = "Show bonus rolls for all world bosses",
-                    order = 6,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_WorldBossEncounters) do
-                            BonusRollFilter.db.profile[14][value] = false
-                        end
-                    end,
-                },
-                normal={
-                    name = "World Bosses",
-                    type = "multiselect",
-                    order = 4,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[14][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[14][key]
-                    end,
-                    values={
-                        [1790] = "Ana-Mouz",
-                        [1956] = "Apocron",
-                        [1883] = "Brutallus",
-                        [1774] = "Calamir",
-                        [1789] = "Drugon the Frostblood",
-                        [1795] = "Flotsam",
-                        [1770] = "Humongris",
-                        [1769] = "Levantus",
-                        [1884] = "Malificus",
-                        [1783] = "Na'zak the Fiend",
-                        [1749] = "Nithogg",
-                        [1763] = "Shar'thos",
-                        [1885] = "Si'vash",
-                        [1756] = "The Soultakers",
-                        [1796] = "Withered J'im",
-                    }
-                }
-            }
-        },
-        argusInvasions = {
-            name = "Argus Invasion Points",
-            type = "group",
-            order = 7,
             args = {
-                argusBossesAllOn = {
-                    name = "Hide rolls for all Argus bosses",
-                    desc = "Hide bonus rolls for all Argus bosses",
-                    order = 1,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_ArugsInvasionEncounters) do
-                            BonusRollFilter.db.profile[14][value] = true
-                        end
-                    end,
-                },
-                argusBossesAllOff = {
-                    name = "Show rolls for all Argus bosses",
-                    desc = "Show bonus rolls for all Argus bosses",
-                    order = 2,
-                    type = "execute",
-                    func = function(info, val)
-                        for key, value in pairs(BRF_ArugsInvasionEncounters) do
-                            BonusRollFilter.db.profile[14][value] = false
-                        end
-                    end,
-                },
-                normal={
-                    name = "Argus Invasion Point Bosses",
-                    type = "multiselect",
-                    order = 3,
-                    set = function(info, key, value)
-                        BonusRollFilter.db.profile[14][key] = value
-                    end,
-                    get = function(info, key)
-                        return BonusRollFilter.db.profile[14][key]
-                    end,
-                    values={
-                        [2010] = "Matron Folnuna",
-                        [2011] = "Mistress Alluradel",
-                        [2012] = "Inquisitor Meto",
-                        [2013] = "Occularus",
-                        [2014] = "Sotanathor",
-                        [2015] = "Pit Lord Vilemus",
-                    }
-                }
+                antorus           = BonusRollFilter:GenerateRaidSettings("Antorus, the Burning Throne", BRF_AntorusEncounters),
+                tombOfSargeras    = BonusRollFilter:GenerateRaidSettings("Tomb of Sargeras", BRF_TombOfSargerasEncounters),
+                nighthold         = BonusRollFilter:GenerateRaidSettings("The Nighthold", BRF_NightholdEncounters),
+                trialOfValor      = BonusRollFilter:GenerateRaidSettings("Trial of Valor", BRF_TrialOfValorEncounters),
+                emeraldNightmare  = BonusRollFilter:GenerateRaidSettings("Emerald Nightmare", BRF_NightmareEncounters),
+                argusInvasions    = BonusRollFilter:GenerateWorldbossSettings("Argus Invasion Points", BRF_ArugsInvasionEncounters),
+                worldBossesLegion = BonusRollFilter:GenerateWorldbossSettings("World Bosses", BRF_WorldBossEncountersLegion),
             }
         },
         dungeons={
             name = "Mythic Dungeons",
             type = "group",
-            order = 8,
+            order = 3,
             args={
                 disable = {
                     name = "Mythic Dungeons",
@@ -1289,6 +407,7 @@ function BonusRollFilter:BonusRollFrame_OnShow(frame)
     elseif(self.db.profile[BRF_RollFrame.difficultyID][BRF_RollFrame.encounterID] == true and BRF_ShowBonusRoll == false) then
         self:Print('Bonus roll hidden, type "/brf show" to open it again.')
         BRF_RollFrame:Hide()
+        --BonusRollFrame_CloseBonusRoll();
     end
     BRF_ShowBonusRoll = false
 end
