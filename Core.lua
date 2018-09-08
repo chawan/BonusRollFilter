@@ -103,11 +103,17 @@ local BRF_BFAWorldBosses = {
     [2141] = "Ji'arak",
     [2197] = "Hailstone Construct",
     [2199] = "Azurethos, The Winged Typhoon",
-    [2213] = "Doom's Howl",
     [2198] = "Warbringer Yenajz",
     [2210] = "Dunegorger Kraulok"
 }
 
+local faction, locFaction = UnitFactionGroup("player")
+
+if (faction == FACTION_ALLIANCE or locFaction == FACTION_ALLIANCE) then
+    BRF_BFAWorldBosses[2213] = "Doom's Howl"
+else
+    BRF_BFAWorldBosses[2212] = "The Lion's Roar"
+end
 
 local BonusRollFilter_OptionsDefaults = {
     profile = {
