@@ -403,11 +403,12 @@ function BonusRollFilter:BonusRollFrame_OnShow(frame)
         if (self.db.profile[BRF_RollFrame.difficultyID] == true and BRF_ShowBonusRoll == false) then
             self:Print('Bonus roll hidden, type "/brf show" to open it again.')
             BRF_RollFrame:Hide()
+            GroupLootContainer_RemoveFrame(GroupLootContainer, BRF_RollFrame);
         end
     elseif(self.db.profile[BRF_RollFrame.difficultyID][BRF_RollFrame.encounterID] == true and BRF_ShowBonusRoll == false) then
         self:Print('Bonus roll hidden, type "/brf show" to open it again.')
         BRF_RollFrame:Hide()
-        --BonusRollFrame_CloseBonusRoll();
+        GroupLootContainer_RemoveFrame(GroupLootContainer, BRF_RollFrame);
     end
     BRF_ShowBonusRoll = false
 end
@@ -428,6 +429,15 @@ end
 function BonusRollFilter:ShowRoll()
     if BRF_RollFrame ~= nil and (BRF_RollFrame:IsVisible() == false and time() <= BRF_RollFrame.endTime and BRF_UserAction == false) then
         BRF_ShowBonusRoll = true
+        GroupLootContainer_AddFrame(GroupLootContainer, BRF_RollFrame);
+
+        -- For some reason if you are using ElvUI the timer bar will be behind the roll frame when you open it again after hiding it
+        if IsAddOnLoaded("ElvUI") then
+            local FrameLevel = BRF_RollFrame:GetFrameLevel();
+            BRF_RollFrame.PromptFrame.Timer:SetFrameLevel(FrameLevel + 1);
+            BRF_RollFrame.BlackBackgroundHoist:SetFrameLevel(FrameLevel);
+        end
+
         BRF_RollFrame:Show()
     else
         self:Print("No active bonus roll to show")
