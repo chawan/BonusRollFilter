@@ -483,7 +483,7 @@ function BonusRollFilter:BonusRollFrame_OnShow(frame)
 
     if (BRF_RollFrame == nil) then
         BRF_RollFrame = frame
-    elseif (frame.difficultyID ~= BRF_RollFrameDifficultyIdBackup and time() <= BRF_RollFrameEndTimeBackup) then
+    elseif (BRF_RollFrameDifficultyIdBackup ~= nil and BRF_RollFrameEndTimeBackup ~= nil and frame.difficultyID ~= BRF_RollFrameDifficultyIdBackup and time() <= BRF_RollFrameEndTimeBackup) then
         BRF_RollFrame = frame
         BRF_RollFrame.difficultyID = BRF_RollFrameDifficultyIdBackup
     else
