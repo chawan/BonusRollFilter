@@ -1,6 +1,9 @@
-local BonusRollFilter = LibStub("AceAddon-3.0"):NewAddon("BonusRollFilter", "AceConsole-3.0", "AceHook-3.0")
+local BonusRollFilter = LibStub("AceAddon-3.0"):NewAddon("BonusRollFilter", "AceEvent-3.0", "AceConsole-3.0", "AceHook-3.0")
 local BRF_ShowBonusRoll = false
 local BRF_RollFrame = nil
+local BRF_RollFrameDifficultyIdBackup = nil
+local BRF_RollFrameEncounterIdBackup = nil
+local BRF_RollFrameEndTimeBackup = nil
 local BRF_UserAction = false
 
 local BRF_OptionsOrder = 1
@@ -129,9 +132,20 @@ local BonusRollFilter_OptionsDefaults = {
         [17] = {
             ["*"] = false
         },
-        [23] = false
+        [23] = false,
+        [8] = false,
+        disableKeystoneLevelToggle = false,
+        disableKeystoneLevel = 0,
     }
 }
+
+function ValidateNumeric(info,val)
+    if not tonumber(val) then
+      return false;
+    end
+
+    return true
+end
 
 function BonusRollFilter:GenerateWorldbossSettings(name, encounters)
     local tempTable = {}
@@ -365,18 +379,70 @@ local BonusRollFilter_OptionsTable = {
             type = "group",
             order = 3,
             args={
+                mythicHeader = {
+                    name = "Normal mythic",
+                    type = "header",
+                    order = 1
+                },
                 disable = {
                     name = "Mythic Dungeons",
+                    order = 2,
                     desc = "Disables bonus rolls in mythic dungeons",
                     descStyle = "inline",
                     type = "toggle",
                     set = function(info, val) BonusRollFilter.db.profile[23] = val end,
                     get = function(info) return BonusRollFilter.db.profile[23] end
+                },
+                mythicPlusHeader = {
+                    name = "Mythic+",
+                    order = 3,
+                    type = "header"
+                },
+                disableAllMythicPlus = {
+                    name = "Disable bonus rolls in all mythic+",
+                    descStyle = "inline",
+                    order = 4,
+                    width = "full",
+                    type = "toggle",
+                    set = function(info, val) 
+                        BonusRollFilter.db.profile[8] = val
+
+                        if BonusRollFilter.db.profile.disableKeystoneLevelToggle then
+                            BonusRollFilter.db.profile.disableKeystoneLevelToggle = false
+                        end
+                    end,
+                    get = function(info) return BonusRollFilter.db.profile[8] end
+                },
+                disableKeystoneLevelToggle = {
+                    name = "Disable bonus rolls if keystone level is lower than: ",
+                    order = 5,
+                    width = 1.5,
+                    type = "toggle",
+                    set = function(info, val) 
+                        BonusRollFilter.db.profile.disableKeystoneLevelToggle = val 
+
+                        if BonusRollFilter.db.profile[8] then
+                            BonusRollFilter.db.profile[8] = false
+                        end
+                    end,
+                    get = function(info) return BonusRollFilter.db.profile.disableKeystoneLevelToggle end
+                },
+                disableKeystoneLevel = {
+                    name = "Keystone level",
+                    order = 6,
+                    width = 0.8,
+                    type = "input",
+                    validate = ValidateNumeric,
+                    set = function(info, val) 
+                        BonusRollFilter.db.profile.disableKeystoneLevel = val
+                    end,
+                    get = function(info) return BonusRollFilter.db.profile.disableKeystoneLevel end
                 }
             }
         },
     }
 }
+
 
 function BonusRollFilter:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("BRF_Data", BonusRollFilter_OptionsDefaults)
@@ -391,6 +457,17 @@ function BonusRollFilter:OnInitialize()
     self:SecureHookScript(BonusRollFrame, "OnShow", "BonusRollFrame_OnShow")
     self:SecureHookScript(BonusRollFrame.PromptFrame.RollButton, "OnClick", "RollButton_OnClick")
     self:SecureHookScript(BonusRollFrame.PromptFrame.PassButton, "OnClick", "PassButton_OnClick")
+
+    self:RegisterEvent("LOADING_SCREEN_ENABLED", "LoadingScreen_Enabled")
+end
+
+function BonusRollFilter:LoadingScreen_Enabled()
+    if BRF_RollFrame ~= nil then
+        BRF_RollFrameDifficultyIdBackup = BRF_RollFrame.difficultyID
+        BRF_RollFrameEncounterIdBackup = BRF_RollFrame.encounterID
+        BRF_RollFrameEndTimeBackup = BRF_RollFrame.endTime
+    end
+    
 end
 
 function BonusRollFilter:RollButton_OnClick()
@@ -402,20 +479,35 @@ function BonusRollFilter:PassButton_OnClick()
 end
 
 function BonusRollFilter:BonusRollFrame_OnShow(frame)
-    BRF_RollFrame = frame
     BRF_UserAction = false
 
-    if (BRF_RollFrame.difficultyID == 23) then
+    if (BRF_RollFrame == nil) then
+        BRF_RollFrame = frame
+    elseif (frame.difficultyID ~= BRF_RollFrameDifficultyIdBackup and time() <= BRF_RollFrameEndTimeBackup) then
+        BRF_RollFrame = frame
+        BRF_RollFrame.difficultyID = BRF_RollFrameDifficultyIdBackup
+    else
+        BRF_RollFrame = frame
+    end
+
+    if (BRF_RollFrame.difficultyID == 8) then
         if (self.db.profile[BRF_RollFrame.difficultyID] == true and BRF_ShowBonusRoll == false) then
-            self:Print('Bonus roll hidden, type "/brf show" to open it again.')
-            BRF_RollFrame:Hide()
-            GroupLootContainer_RemoveFrame(GroupLootContainer, BRF_RollFrame);
+            BonusRollFilter:HideRoll()
+        elseif (self.db.profile.disableKeystoneLevelToggle == true and BRF_ShowBonusRoll == false) then
+            local _, level, _, _, _ = C_ChallengeMode.GetCompletionInfo()
+
+            if (level < tonumber(self.db.profile.disableKeystoneLevel)) then
+                BonusRollFilter:HideRoll()
+            end
+        end
+    elseif (BRF_RollFrame.difficultyID == 23) then
+        if (self.db.profile[BRF_RollFrame.difficultyID] == true and BRF_ShowBonusRoll == false) then
+            BonusRollFilter:HideRoll()
         end
     elseif(self.db.profile[BRF_RollFrame.difficultyID][BRF_RollFrame.encounterID] == true and BRF_ShowBonusRoll == false) then
-        self:Print('Bonus roll hidden, type "/brf show" to open it again.')
-        BRF_RollFrame:Hide()
-        GroupLootContainer_RemoveFrame(GroupLootContainer, BRF_RollFrame);
+        BonusRollFilter:HideRoll()
     end
+
     BRF_ShowBonusRoll = false
 end
 
@@ -430,6 +522,12 @@ function BonusRollFilter:SlashCommand(command)
         InterfaceOptionsFrame_OpenToCategory("BonusRollFilter")
         InterfaceOptionsFrame_OpenToCategory("BonusRollFilter")
     end
+end
+
+function BonusRollFilter:HideRoll()
+    self:Print('Bonus roll hidden, type "/brf show" to open it again.')
+    BRF_RollFrame:Hide()
+    GroupLootContainer_RemoveFrame(GroupLootContainer, BRF_RollFrame);
 end
 
 function BonusRollFilter:ShowRoll()
