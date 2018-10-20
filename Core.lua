@@ -316,7 +316,6 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters, enableLFR, enabl
     tempTable.args = {}
 
         if enableLFR then
-            DEFAULT_CHAT_FRAME:AddMessage("INSIDE LFG CHECK")
             tempTable.args.AllLFROn = {
                 name = "Hide all rolls in LFR",
                 desc = "Hide bonus rolls for all "..name.." bosses in LFR",
