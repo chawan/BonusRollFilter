@@ -8,6 +8,119 @@ local BRF_UserAction = false
 
 local BRF_OptionsOrder = 1
 
+-- MoP uses spellID instead of encounterID for raids before Siege of Orgrimmar since the rollframe does not include encounterID for those
+local BRF_MopWorldBosses = {
+    [132205] = "Sha of Anger",
+    [132206] = "Salyis's Warband",
+    [136381] = "Nalak, The Storm Lord",
+    [137554] = "Oondasta",
+    [148317] = "Timeless Isle Celestials",
+    [148316] = "Ordos, Fire-God of the Yaungol",
+}
+
+local BRF_MogushanVaults = {
+    [125144] = "The Stone Guard",
+    [132189] = "Feng the Accursed",
+    [132190] = "Gara'jal the Spiritbinder",
+    [132191] = "The Spirit Kings",
+    [132192] = "Elegon",
+    [132193] = "Will of the Emperor",
+}
+
+local BRF_HeartOfFear = {
+    [132194] = "Imperial Vizier Zor'lok",
+    [132195] = "Blade Lord Ta'yak",
+    [132196] = "Garalon",
+    [132197] = "Wind Lord Mel'jarak",
+    [132198] = "Amber-Shaper Un'sok",
+    [132199] = "Grand Empress Shek'zeer",
+}
+
+local BRF_TerraceOfEndlessSpring = {
+    [132200] =  "Protectors of the Endless",
+    [132201] =  "Tsulong",
+    [132202] =  "Lei Shi",
+    [132203] =  "Sha of Fear",
+}
+
+local BRF_ThroneOfThunder = {
+    [139674] = "Jin'rokh the Breaker",
+    [139677] = "Horridon",
+    [139679] = "Council of Elders",
+    [139680] = "Tortos",
+    [139682] = "Megaera",
+    [139684] = "Ji-Kun",
+    [139686] = "Durumu the Forgotten",
+    [139687] = "Primordius",
+    [139688] = "Dark Animus",
+    [139689] = "Iron Qon",
+    [139690] = "Twin Consorts",
+    [139691] = "Lei Shen",
+}
+
+local BRF_SiegeOfOrgrimmar = {
+    [852] = "Immerseus",
+    [849] = "The Fallen Protectors",
+    [866] = "Norushen",
+    [867] = "Sha of Pride",
+    [881] = "Galakras",
+    [864] = "Iron Juggernaut",
+    [856] = "Kor'kron Dark Shaman",
+    [850] = "General Nazgrim",
+    [846] = "Malkorok",
+    [870] = "Spoils of Pandaria",
+    [851] = "Thok the Bloodthirsty",
+    [865] = "Siegecrafter Blackfuse",
+    [853] = "Paragons of the Klaxxi",
+    [869] = "Garrosh Hellscrea",
+}
+
+local BRF_DraenorWorldBosses = {
+    [1291] = "Drov the Ruiner",
+    [1211] = "Tarlna the Ageless",
+    [1262] = "Rukhmar",
+    [1452] = "Supreme Lord Kazzak",
+}
+
+local BRF_Highmaul = {
+    [1128] = "Kargath Bladefist",
+    [971] =  "The Butcher",
+    [1195] = "Tectus",
+    [1196] = "Brackenspore",
+    [1148] = "Twin Ogron",
+    [1153] = "Ko'ragh",
+    [1197] = "Imperator Mar'gok",
+}
+
+local BRF_BlackrockFoundry = {
+    [1202] = "Oregorger",
+    [1155] = "Hans'gar and Franzok",
+    [1122] = "Beastlord Darmac",
+    [1161] = "Gruul",
+    [1123] = "Flamebender Ka'graz",
+    [1147] = "Operator Thogar",
+    [1154] = "The Blast Furnace",
+    [1162] = "Kromog",
+    [1203] = "The Iron Maidens",
+    [959] = "Blackhand",
+}
+
+local BRF_HellfireCitadel = {
+    [1426] = "Hellfire Assault",
+    [1425] = "Iron Reaver",
+    [1392] = "Kormrok",
+    [1432] = "Hellfire High Council",
+    [1396] = "Kilrogg Deadeye",
+    [1372] = "Gorefiend",
+    [1433] = "Shadow-Lord Iskar",
+    [1427] = "Socrethar the Eternal",
+    [1391] = "Fel Lord Zakuun",
+    [1447] = "Xhul'horac",
+    [1394] = "Tyrant Velhari",
+    [1395] = "Mannoroth",
+    [1438] = "Archimond",
+}
+
 local BRF_TombOfSargerasEncounters = {
     [1862] = "Goroth", 
     [1867] = "Demonic Inquisition", 
@@ -194,14 +307,17 @@ function BonusRollFilter:GenerateWorldbossSettings(name, encounters)
     return tempTable
 end
 
-function BonusRollFilter:GenerateRaidSettings(name, encounters)
+function BonusRollFilter:GenerateRaidSettings(name, encounters, enableLFR, enableNormal, enableHeroic, enableMythic)
     local tempTable = {}
 
     tempTable.name = name
     tempTable.type = "group"
     tempTable.order = BRF_OptionsOrder
-    tempTable.args = {
-            AllLFROn = {
+    tempTable.args = {}
+
+        if enableLFR then
+            DEFAULT_CHAT_FRAME:AddMessage("INSIDE LFG CHECK")
+            tempTable.args.AllLFROn = {
                 name = "Hide all rolls in LFR",
                 desc = "Hide bonus rolls for all "..name.." bosses in LFR",
                 order = 1,
@@ -211,8 +327,8 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                         BonusRollFilter.db.profile[17][key] = true
                     end
                 end,
-            },
-            AllLFROff = {
+            }
+            tempTable.args.AllLFROff = {
                 name = "Show all rolls in LFR",
                 desc = "Show bonus rolls for all "..name.." bosses in LFR",
                 order = 1,
@@ -222,8 +338,8 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                         BonusRollFilter.db.profile[17][key] = false
                     end
                 end,
-            },
-            lfr={
+            }
+            tempTable.args.lfr={
                 name = "LFR",
                 type = "multiselect",
                 order = 3,
@@ -234,8 +350,11 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                     return BonusRollFilter.db.profile[17][key]
                 end,
                 values = encounters
-            },
-            AllNormalOn = {
+            }
+        end
+
+        if enableNormal then
+            tempTable.args.AllNormalOn = {
                 name = "Hide all rolls on normal",
                 desc = "Hide bonus rolls for all "..name.." bosses on normal",
                 order = 4,
@@ -245,8 +364,8 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                         BonusRollFilter.db.profile[14][key] = true
                     end
                 end,
-            },
-            AllNormalOff = {
+            }
+            tempTable.args.AllNormalOff = {
                 name = "Show all rolls on normal",
                 desc = "Show bonus rolls for all "..name.." bosses on normal",
                 order = 5,
@@ -256,8 +375,8 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                         BonusRollFilter.db.profile[14][key] = false
                     end
                 end,
-            },
-            normal={
+            }
+            tempTable.args.normal={
                 name = "Normal",
                 type = "multiselect",
                 order = 6,
@@ -268,8 +387,11 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                     return BonusRollFilter.db.profile[14][key]
                 end,
                 values = encounters
-            },
-            AllHeroicOn = {
+            }
+        end
+
+        if enableHeroic then
+            tempTable.args.AllHeroicOn = {
                 name = "Hide all rolls on heroic",
                 desc = "Hide bonus rolls for all "..name.." bosses on heroic",
                 order = 7,
@@ -279,8 +401,8 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                         BonusRollFilter.db.profile[15][key] = true
                     end
                 end,
-            },
-            AllHeroicOff = {
+            }
+            tempTable.args.AllHeroicOff = {
                 name = "Show all rolls on heroic",
                 desc = "Show bonus rolls for all "..name.." bosses on heroic",
                 order = 8,
@@ -290,8 +412,8 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                         BonusRollFilter.db.profile[15][key] = false
                     end
                 end,
-            },
-            heroic={
+            }
+            tempTable.args.heroic={
                 name = "Heroic",
                 type = "multiselect",
                 order = 9,
@@ -302,8 +424,11 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                     return BonusRollFilter.db.profile[15][key]
                 end,
                 values = encounters
-            },
-            AllMythicOn = {
+            }
+        end
+
+        if enableMythic then
+            tempTable.args.AllMythicOn = {
                 name = "Hide all rolls on mythic",
                 desc = "Hides bonus rolls for all "..name.." bosses on mythic",
                 order = 10,
@@ -313,8 +438,8 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                         BonusRollFilter.db.profile[16][key] = true
                     end
                 end,
-            },
-            AllMythicOff = {
+            }
+            tempTable.args.AllMythicOff = {
                 name = "Show all rolls on mythic",
                 desc = "Show bonus rolls for all "..name.." bosses on mythic",
                 order = 11,
@@ -324,8 +449,8 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                         BonusRollFilter.db.profile[16][key] = false
                     end
                 end,
-            },
-            mythic={
+            }
+            tempTable.args.mythic={
                 name = "Mythic",
                 type = "multiselect",
                 order = 12,
@@ -337,7 +462,7 @@ function BonusRollFilter:GenerateRaidSettings(name, encounters)
                 end,
                 values = encounters
             }
-        }
+        end
 
     BRF_OptionsOrder = BRF_OptionsOrder + 1
     return tempTable
@@ -356,7 +481,7 @@ local BonusRollFilter_OptionsTable = {
             order = 1,
             type = "group",
             args = {
-                uldir          = BonusRollFilter:GenerateRaidSettings("Uldir", BRF_UldirEncounters),
+                uldir          = BonusRollFilter:GenerateRaidSettings("Uldir", BRF_UldirEncounters, true, true, true, true),
                 worldBossesBFA = BonusRollFilter:GenerateWorldbossSettings("World Bosses", BRF_BFAWorldBosses)
             }
         },
@@ -365,19 +490,43 @@ local BonusRollFilter_OptionsTable = {
             order = 2,
             type = "group",
             args = {
-                antorus           = BonusRollFilter:GenerateRaidSettings("Antorus, the Burning Throne", BRF_AntorusEncounters),
-                tombOfSargeras    = BonusRollFilter:GenerateRaidSettings("Tomb of Sargeras", BRF_TombOfSargerasEncounters),
-                nighthold         = BonusRollFilter:GenerateRaidSettings("The Nighthold", BRF_NightholdEncounters),
-                trialOfValor      = BonusRollFilter:GenerateRaidSettings("Trial of Valor", BRF_TrialOfValorEncounters),
-                emeraldNightmare  = BonusRollFilter:GenerateRaidSettings("Emerald Nightmare", BRF_NightmareEncounters),
+                antorus           = BonusRollFilter:GenerateRaidSettings("Antorus, the Burning Throne", BRF_AntorusEncounters, true, true, true, true),
+                tombOfSargeras    = BonusRollFilter:GenerateRaidSettings("Tomb of Sargeras", BRF_TombOfSargerasEncounters, true, true, true, true),
+                nighthold         = BonusRollFilter:GenerateRaidSettings("The Nighthold", BRF_NightholdEncounters, true, true, true, true),
+                trialOfValor      = BonusRollFilter:GenerateRaidSettings("Trial of Valor", BRF_TrialOfValorEncounters, true, true, true, true),
+                emeraldNightmare  = BonusRollFilter:GenerateRaidSettings("Emerald Nightmare", BRF_NightmareEncounters, true, true, true, true),
                 argusInvasions    = BonusRollFilter:GenerateWorldbossSettings("Argus Invasion Points", BRF_ArugsInvasionEncounters),
                 worldBossesLegion = BonusRollFilter:GenerateWorldbossSettings("World Bosses", BRF_WorldBossEncountersLegion),
+            }
+        },
+        wodCategory = {
+            name = "Warlords of Draenor",
+            order = 3,
+            type = "group",
+            args = {
+                citadel           = BonusRollFilter:GenerateRaidSettings("Hellfire Citadel", BRF_HellfireCitadel, true, true, true, true),
+                foundry           = BonusRollFilter:GenerateRaidSettings("Blackrock Foundry", BRF_BlackrockFoundry, true, true, true, true),
+                highmaul          = BonusRollFilter:GenerateRaidSettings("Highmaul", BRF_Highmaul, true, true, true, true),
+                worldBossesWOD    = BonusRollFilter:GenerateWorldbossSettings("World Bosses", BRF_DraenorWorldBosses)
+            }
+        },
+        mopCategory = {
+            name = "Mists of Pandaria",
+            order = 4,
+            type = "group",
+            args = {
+                siege           = BonusRollFilter:GenerateRaidSettings("Siege of Orgrimmar", BRF_SiegeOfOrgrimmar, true, true, true, true),
+                throne          = BonusRollFilter:GenerateRaidSettings("Throne of Thunder", BRF_ThroneOfThunder, true, true, true, false),
+                terrace         = BonusRollFilter:GenerateRaidSettings("Terrace of Endless Spring", BRF_TerraceOfEndlessSpring, true, true, true, false),
+                hearthOfFear    = BonusRollFilter:GenerateRaidSettings("Heart of Fear", BRF_HeartOfFear, true, true, true, false),
+                vaults          = BonusRollFilter:GenerateRaidSettings("Mogu'shan Vaults", BRF_MogushanVaults, true, true, true, false),
+                worldBossesMOP  = BonusRollFilter:GenerateWorldbossSettings("World Bosses", BRF_MopWorldBosses)
             }
         },
         dungeons={
             name = "Mythic Dungeons",
             type = "group",
-            order = 3,
+            order = 4,
             args={
                 mythicHeader = {
                     name = "Normal mythic",
@@ -490,7 +639,7 @@ function BonusRollFilter:BonusRollFrame_OnShow(frame)
         BRF_RollFrame = frame
     end
 
-    if (BRF_RollFrame.difficultyID == 8) then
+    if (BRF_RollFrame.difficultyID == 8) then -- Mythic plus
         if (self.db.profile[BRF_RollFrame.difficultyID] == true and BRF_ShowBonusRoll == false) then
             BonusRollFilter:HideRoll()
         elseif (self.db.profile.disableKeystoneLevelToggle == true and BRF_ShowBonusRoll == false) then
@@ -500,11 +649,19 @@ function BonusRollFilter:BonusRollFrame_OnShow(frame)
                 BonusRollFilter:HideRoll()
             end
         end
-    elseif (BRF_RollFrame.difficultyID == 23) then
+    elseif (BRF_RollFrame.difficultyID == 23) then -- Normal mythics
         if (self.db.profile[BRF_RollFrame.difficultyID] == true and BRF_ShowBonusRoll == false) then
             BonusRollFilter:HideRoll()
         end
-    elseif(self.db.profile[BRF_RollFrame.difficultyID][BRF_RollFrame.encounterID] == true and BRF_ShowBonusRoll == false) then
+    elseif (BRF_RollFrame.difficultyID == 3) or (BRF_RollFrame.difficultyID == 4) then -- 10 or 25 man normal for MoP raids
+        if (self.db.profile[14][BRF_RollFrame.spellID] == true and BRF_ShowBonusRoll == false) then
+            BonusRollFilter:HideRoll()
+        end
+    elseif (BRF_RollFrame.difficultyID == 5) or (BRF_RollFrame.difficultyID == 6) then -- 10 or 25 man heroic for MoP raids
+        if (self.db.profile[15][BRF_RollFrame.spellID] == true and BRF_ShowBonusRoll == false) then
+            BonusRollFilter:HideRoll()
+        end
+    elseif (self.db.profile[BRF_RollFrame.difficultyID][BRF_RollFrame.encounterID] == true and BRF_ShowBonusRoll == false) or (self.db.profile[BRF_RollFrame.difficultyID][BRF_RollFrame.spellID] == true and BRF_ShowBonusRoll == false) then -- Raids
         BonusRollFilter:HideRoll()
     end
 
