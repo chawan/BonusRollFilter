@@ -223,12 +223,44 @@ local BRF_BFAWorldBosses = {
     [2210] = "Dunegorger Kraulok"
 }
 
+local BRF_BattleOfDazaralor = nil -- Some differences in bosses between horde and alliance so it's set below
+
+local BRF_CrucibleOfStorms = {
+    [2328] = "The Restless Cabal",
+    [2332] = "Uu'nat, Harbinger of the Void"
+}
+
 local faction, locFaction = UnitFactionGroup("player")
 
 if (faction == FACTION_ALLIANCE or locFaction == FACTION_ALLIANCE) then
     BRF_BFAWorldBosses[2213] = "Doom's Howl"
+
+    BRF_BattleOfDazaralor = {
+        [2344] = "Champion of the Light",
+        [2323] = "Jadefire Masters",
+        [2340] = "Grong, the Revenant",
+        [2342] = "Opulence",
+        [2330] = "Conclave of the Chosen",
+        [2335] = "King Rastakhan",
+        [2334] = "High Tinker Mekkatorque",
+        [2337] = "Stormwall Blockade",
+        [2343] = "Lady Jaina Proudmoore"
+    }
+
 else
     BRF_BFAWorldBosses[2212] = "The Lion's Roar"
+
+    BRF_BattleOfDazaralor = {
+        [2333] = "Champion of the Light",
+        [2325] = "Grong, the Jungle Lord",
+        [2341] = "Jadefire Masters",
+        [2342] = "Opulence",
+        [2330] = "Conclave of the Chosen",
+        [2335] = "King Rastakhan",
+        [2334] = "High Tinker Mekkatorque",
+        [2337] = "Stormwall Blockade",
+        [2343] = "Lady Jaina Proudmoore"
+    }
 end
 
 local BonusRollFilter_OptionsDefaults = {
@@ -480,8 +512,10 @@ local BonusRollFilter_OptionsTable = {
             order = 1,
             type = "group",
             args = {
+                crucible       = BonusRollFilter:GenerateRaidSettings("Crucible of Storms", BRF_CrucibleOfStorms, true, true, true, true),
+                dazaralor      = BonusRollFilter:GenerateRaidSettings("Battle of Dazar'alor", BRF_BattleOfDazaralor, true, true, true, true),
                 uldir          = BonusRollFilter:GenerateRaidSettings("Uldir", BRF_UldirEncounters, true, true, true, true),
-                worldBossesBFA = BonusRollFilter:GenerateWorldbossSettings("World Bosses", BRF_BFAWorldBosses)
+                worldBossesBFA = BonusRollFilter:GenerateWorldbossSettings("World Bosses", BRF_BFAWorldBosses),
             }
         },
         legionCategory = {
