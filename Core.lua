@@ -220,7 +220,9 @@ local BRF_BFAWorldBosses = {
     [2197] = "Hailstone Construct",
     [2199] = "Azurethos, The Winged Typhoon",
     [2198] = "Warbringer Yenajz",
-    [2210] = "Dunegorger Kraulok"
+    [2210] = "Dunegorger Kraulok",
+    [2362] = "Ulmath, the Soulbinder",
+    [2363] = "Wekemara"
 }
 
 local BRF_BattleOfDazaralor = nil -- Some differences in bosses between horde and alliance so it's set below
@@ -234,6 +236,7 @@ local faction, locFaction = UnitFactionGroup("player")
 
 if (faction == FACTION_ALLIANCE or locFaction == FACTION_ALLIANCE) then
     BRF_BFAWorldBosses[2213] = "Doom's Howl"
+    BRF_BFAWorldBosses[2345] = "Ivus the Decayed" -- Add the horde version as well
 
     BRF_BattleOfDazaralor = {
         [2344] = "Champion of the Light",
@@ -249,6 +252,7 @@ if (faction == FACTION_ALLIANCE or locFaction == FACTION_ALLIANCE) then
 
 else
     BRF_BFAWorldBosses[2212] = "The Lion's Roar"
+    BRF_BFAWorldBosses[2329] = "Ivus the Forest Lord"
 
     BRF_BattleOfDazaralor = {
         [2333] = "Champion of the Light",
@@ -262,6 +266,17 @@ else
         [2343] = "Lady Jaina Proudmoore"
     }
 end
+
+local BRF_EternalPalace = {
+    [2352] = "Abyssal Commander Sivara",
+    [2347] = "Blackwater Behemoth",
+    [2353] = "Radiance of Azshara",
+    [2354] = "Lady Ashvane",
+    [2351] = "Orgozoa",
+    [2359] = "The Queen's Court",
+    [2349] = "Za'qul, Harbinger of Ny'alotha",
+    [2361] = "Queen Azshara"
+}
 
 local BonusRollFilter_OptionsDefaults = {
     profile = {
@@ -512,6 +527,7 @@ local BonusRollFilter_OptionsTable = {
             order = 1,
             type = "group",
             args = {
+                palace         = BonusRollFilter:GenerateRaidSettings("The Eternal Palace", BRF_EternalPalace, true, true, true, true),
                 crucible       = BonusRollFilter:GenerateRaidSettings("Crucible of Storms", BRF_CrucibleOfStorms, true, true, true, true),
                 dazaralor      = BonusRollFilter:GenerateRaidSettings("Battle of Dazar'alor", BRF_BattleOfDazaralor, true, true, true, true),
                 uldir          = BonusRollFilter:GenerateRaidSettings("Uldir", BRF_UldirEncounters, true, true, true, true),
