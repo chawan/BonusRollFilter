@@ -222,7 +222,9 @@ local BRF_BFAWorldBosses = {
     [2198] = "Warbringer Yenajz",
     [2210] = "Dunegorger Kraulok",
     [2362] = "Ulmath, the Soulbinder",
-    [2363] = "Wekemara"
+    [2363] = "Wekemara",
+    [2378] = "Grand Empress Shek'zara",
+    [2381] = "Vuk'laz the Earthbreaker"
 }
 
 local BRF_BattleOfDazaralor = nil -- Some differences in bosses between horde and alliance so it's set below
@@ -264,8 +266,6 @@ else
         [2334] = "High Tinker Mekkatorque",
         [2337] = "Stormwall Blockade",
         [2343] = "Lady Jaina Proudmoore",
-        [2378] = "Grand Empress Shek'zara",
-        [2381] = "Vuk'laz the Earthbreaker"
     }
 end
 
@@ -292,7 +292,7 @@ local BRF_Nyalotha = {
     [2370] =  "Vexiona",
     [2364] =  "Ra-den the Despoiled",
     [2366] =  "Carapace of N'Zoth",
-    [2375] =  "N'Zoth the Corrupto"
+    [2375] =  "N'Zoth the Corruptor"
 }
 
 local BonusRollFilter_OptionsDefaults = {
