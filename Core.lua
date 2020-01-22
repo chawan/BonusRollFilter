@@ -263,7 +263,9 @@ else
         [2335] = "King Rastakhan",
         [2334] = "High Tinker Mekkatorque",
         [2337] = "Stormwall Blockade",
-        [2343] = "Lady Jaina Proudmoore"
+        [2343] = "Lady Jaina Proudmoore",
+        [2378] = "Grand Empress Shek'zara",
+        [2381] = "Vuk'laz the Earthbreaker"
     }
 end
 
@@ -276,6 +278,21 @@ local BRF_EternalPalace = {
     [2359] = "The Queen's Court",
     [2349] = "Za'qul, Harbinger of Ny'alotha",
     [2361] = "Queen Azshara"
+}
+
+local BRF_Nyalotha = {
+    [2368] =  "Wrathion, the Black Emperor",
+    [2365] =  "Maut",
+    [2369] =  "The Prophet Skitra",
+    [2377] =  "Dark Inquisitor Xanesh",
+    [2372] =  "The Hivemind",
+    [2367] =  "Shad'har the Insatiable",
+    [2373] =  "Drest'agath",
+    [2374] =  "Il'gynoth, Corruption Reborn",
+    [2370] =  "Vexiona",
+    [2364] =  "Ra-den the Despoiled",
+    [2366] =  "Carapace of N'Zoth",
+    [2375] =  "N'Zoth the Corrupto"
 }
 
 local BonusRollFilter_OptionsDefaults = {
@@ -527,6 +544,7 @@ local BonusRollFilter_OptionsTable = {
             order = 1,
             type = "group",
             args = {
+                nyalotha       = BonusRollFilter:GenerateRaidSettings("Ny'alotha, the Waking City", BRF_Nyalotha, true, true, true, true),
                 palace         = BonusRollFilter:GenerateRaidSettings("The Eternal Palace", BRF_EternalPalace, true, true, true, true),
                 crucible       = BonusRollFilter:GenerateRaidSettings("Crucible of Storms", BRF_CrucibleOfStorms, true, true, true, true),
                 dazaralor      = BonusRollFilter:GenerateRaidSettings("Battle of Dazar'alor", BRF_BattleOfDazaralor, true, true, true, true),
